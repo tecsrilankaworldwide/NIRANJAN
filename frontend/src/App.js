@@ -11,6 +11,8 @@ import Contact from "./pages/Contact";
 import AgeSelector from "./pages/AgeSelector";
 import Dashboard from "./pages/Dashboard";
 import Quiz from "./pages/Quiz";
+import TeenSelector from "./pages/TeenSelector";
+import TeenDashboard from "./pages/TeenDashboard";
 import { Toaster } from "./components/ui/toaster";
 
 // User Context for age level and user data
@@ -38,6 +40,8 @@ function App() {
               <Route path="/" element={<Home />} />
               <Route path="/age-selector" element={<AgeSelector />} />
               <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/teen-selector" element={<TeenSelector />} />
+              <Route path="/teen-dashboard" element={<TeenDashboard />} />
               <Route path="/about" element={<About />} />
               <Route path="/courses" element={<Courses />} />
               <Route path="/activities" element={<Activities />} />
