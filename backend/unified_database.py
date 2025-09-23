@@ -64,6 +64,18 @@ class UnifiedDatabaseManager:
     async def get_user(cls, user_id: str) -> Optional[User]:
         """Get user by ID"""
         db = await cls.get_db()
+        # Try both _id (MongoDB ObjectId) and id field
+        from bson import ObjectId
+        try:
+            # First try with ObjectId
+            user_data = await db.users.find_one({"_id": ObjectId(user_id)})
+            if user_data:
+                user_data["id"] = str(user_data["_id"])
+                return User(**user_data)
+        except:
+            pass
+        
+        # Then try with id field
         user_data = await db.users.find_one({"id": user_id})
         return User(**user_data) if user_data else None
     
