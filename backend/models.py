@@ -4,6 +4,15 @@ from datetime import datetime
 from enum import Enum
 import uuid
 
+# Unified Age Levels for TecaiKids Platform (Ages 4-16)
+class UnifiedAgeLevel(str, Enum):
+    LITTLE_LEARNERS = "4-6"      # Ages 4-6: Little Learners
+    YOUNG_EXPLORERS = "7-9"      # Ages 7-9: Young Explorers  
+    SMART_KIDS = "10-12"         # Ages 10-12: Smart Kids
+    TECH_TEENS = "13-15"         # Ages 13-15: Tech Teens
+    FUTURE_LEADERS = "16-18"     # Ages 16-18: Future Leaders
+
+# Backwards compatibility aliases
 class AgeLevel(str, Enum):
     PRESCHOOL = "4-6"  # Ages 4-6
     ELEMENTARY = "7-9"  # Ages 7-9
@@ -27,24 +36,114 @@ class CourseCategory(str, Enum):
     ART = "Art"
     CODING = "Coding"
     MUSIC = "Music"
+    LOGICAL_THINKING = "Logical Thinking"
+    ALGORITHMIC_THINKING = "Algorithmic Thinking"
 
-# User Models
+# Subscription and Payment Models
+class SubscriptionType(str, Enum):
+    MONTHLY = "monthly"
+    QUARTERLY = "quarterly"
+    ANNUAL = "annual"
+
+class PaymentMethod(str, Enum):
+    STRIPE = "stripe"
+    BANK_TRANSFER = "bank_transfer"
+    EZCASH = "ezcash"
+    MCASH = "mcash"
+
+class PaymentStatus(str, Enum):
+    PENDING = "pending"
+    PROCESSING = "processing"
+    COMPLETED = "completed"
+    FAILED = "failed"
+    REFUNDED = "refunded"
+
+class SubscriptionStatus(str, Enum):
+    ACTIVE = "active"
+    INACTIVE = "inactive"
+    CANCELLED = "cancelled"
+    EXPIRED = "expired"
+
+# Payment Transaction Model
+class PaymentTransaction(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    user_id: str
+    session_id: Optional[str] = None
+    amount: float
+    currency: str = "LKR"
+    payment_method: PaymentMethod
+    payment_status: PaymentStatus = PaymentStatus.PENDING
+    subscription_type: SubscriptionType
+    age_level: UnifiedAgeLevel
+    metadata: Optional[Dict[str, Any]] = {}
+    stripe_session_id: Optional[str] = None
+    bank_reference: Optional[str] = None
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    updated_at: datetime = Field(default_factory=datetime.utcnow)
+
+# Subscription Model
+class Subscription(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    user_id: str
+    subscription_type: SubscriptionType
+    age_level: UnifiedAgeLevel
+    status: SubscriptionStatus = SubscriptionStatus.ACTIVE
+    start_date: datetime = Field(default_factory=datetime.utcnow)
+    end_date: Optional[datetime] = None
+    next_billing_date: Optional[datetime] = None
+    monthly_amount: float
+    quarterly_amount: float
+    workbook_delivery_address: Optional[str] = None
+    last_workbook_delivery: Optional[datetime] = None
+    next_workbook_delivery: Optional[datetime] = None
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    updated_at: datetime = Field(default_factory=datetime.utcnow)
+
+# Workbook Delivery Model
+class WorkbookDelivery(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    subscription_id: str
+    user_id: str
+    age_level: UnifiedAgeLevel
+    delivery_address: str
+    delivery_status: str = "scheduled"  # scheduled, shipped, delivered, failed
+    tracking_number: Optional[str] = None
+    shipped_date: Optional[datetime] = None
+    delivered_date: Optional[datetime] = None
+    quarter: str  # Q1, Q2, Q3, Q4
+    year: int
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+
+# User Models (Updated for Unified Platform)
 class User(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     name: str
     age: int
-    age_level: AgeLevel
+    age_level: UnifiedAgeLevel
     parent_email: str
+    student_email: Optional[str] = None
+    phone: Optional[str] = None
+    school: Optional[str] = None
+    grade: Optional[int] = None
+    interests: List[str] = []
+    career_goals: List[str] = []
     avatar: Optional[str] = None
     created_at: datetime = Field(default_factory=datetime.utcnow)
     total_points: int = 0
     streak_days: int = 0
     last_activity: Optional[datetime] = None
+    subscription_id: Optional[str] = None
 
 class UserCreate(BaseModel):
     name: str
     age: int
     parent_email: str
+    student_email: Optional[str] = None
+    phone: Optional[str] = None
+    school: Optional[str] = None
+    grade: Optional[int] = None
+    interests: List[str] = []
+    career_goals: List[str] = []
     avatar: Optional[str] = None
 
 # Course Models
@@ -53,7 +152,7 @@ class Course(BaseModel):
     title: str
     description: str
     category: CourseCategory
-    age_level: AgeLevel
+    age_level: UnifiedAgeLevel
     difficulty: DifficultyLevel
     duration_minutes: int
     total_lessons: int
@@ -68,7 +167,7 @@ class CourseCreate(BaseModel):
     title: str
     description: str
     category: CourseCategory
-    age_level: AgeLevel
+    age_level: UnifiedAgeLevel
     difficulty: DifficultyLevel
     duration_minutes: int
     total_lessons: int
@@ -99,7 +198,7 @@ class Quiz(BaseModel):
     title: str
     description: str
     category: CourseCategory
-    age_level: AgeLevel
+    age_level: UnifiedAgeLevel
     difficulty: DifficultyLevel
     questions: List[QuizQuestion]
     time_limit_minutes: Optional[int] = None
@@ -112,7 +211,7 @@ class QuizCreate(BaseModel):
     title: str
     description: str
     category: CourseCategory
-    age_level: AgeLevel
+    age_level: UnifiedAgeLevel
     difficulty: DifficultyLevel
     questions: List[QuizQuestion]
     time_limit_minutes: Optional[int] = None
@@ -177,7 +276,7 @@ class Activity(BaseModel):
     title: str
     description: str
     category: CourseCategory
-    age_level: AgeLevel
+    age_level: UnifiedAgeLevel
     difficulty: DifficultyLevel
     activity_type: str  # game, puzzle, creative, experiment
     duration_minutes: int
@@ -193,7 +292,7 @@ class LeaderboardEntry(BaseModel):
     user_name: str
     total_points: int
     rank: int
-    age_level: AgeLevel
+    age_level: UnifiedAgeLevel
     avatar: Optional[str] = None
 
 # Response Models
@@ -218,4 +317,30 @@ class AgeBasedContent(BaseModel):
     courses: List[Course]
     quizzes: List[Quiz]
     activities: List[Activity]
-    recommended_for_age: AgeLevel
+    recommended_for_age: UnifiedAgeLevel
+
+# Pricing Models
+class PricingPlan(BaseModel):
+    age_level: UnifiedAgeLevel
+    monthly_price: float
+    quarterly_price: float
+    quarterly_savings: float
+    digital_content_price: float
+    physical_materials_price: float = 1500.00
+    features: List[str]
+    description: str
+
+# Payment Request Models
+class PaymentRequest(BaseModel):
+    user_id: str
+    age_level: UnifiedAgeLevel
+    subscription_type: SubscriptionType
+    payment_method: PaymentMethod
+    delivery_address: Optional[str] = None
+
+class PaymentResponse(BaseModel):
+    transaction_id: str
+    payment_url: Optional[str] = None
+    bank_details: Optional[Dict[str, Any]] = None
+    success: bool
+    message: str
