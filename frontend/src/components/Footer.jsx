@@ -50,12 +50,12 @@ const Footer = () => {
                 <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
                   TecaiKids
                 </h1>
-                <p className="text-sm text-gray-400">Learn & Grow</p>
+                <p className="text-xs text-gray-400">A TEC Sri Lanka Worldwide Initiative</p>
               </div>
             </Link>
             
             <p className="text-gray-300 mb-6 leading-relaxed max-w-md">
-              Empowering children worldwide with interactive, engaging, and safe learning experiences 
+              Empowering Sri Lankan children with world-class interactive learning experiences 
               that build confidence and spark curiosity for lifelong learning.
             </p>
 
