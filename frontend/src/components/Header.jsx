@@ -1,107 +1,146 @@
 import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useUser } from '../App';
 import { Button } from './ui/button';
-import { Menu, X, BookOpen, Users, Star, Phone } from 'lucide-react';
-import { Link, useLocation } from 'react-router-dom';
+import { Badge } from './ui/badge';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const location = useLocation();
+  const { user, ageLevel } = useUser();
+  const navigate = useNavigate();
 
-  const navItems = [
-    { name: 'Home', path: '/', icon: BookOpen },
-    { name: 'Kids Courses', path: '/courses', icon: BookOpen },
-    { name: 'Teen Academy', path: '/teen-selector', icon: Star },
-    { name: 'About', path: '/about', icon: Users },
-    { name: 'Contact', path: '/contact', icon: Phone }
-  ];
+  const getAgeLevelInfo = (level) => {
+    const ageLevelData = {
+      '4-6': { name: 'Little Learners', emoji: '🌟' },
+      '7-9': { name: 'Young Explorers', emoji: '🚀' },
+      '10-12': { name: 'Smart Kids', emoji: '⚡' },
+      '13-15': { name: 'Tech Teens', emoji: '💻' },
+      '16-18': { name: 'Future Leaders', emoji: '🎯' }
+    };
+    return ageLevelData[level] || { name: 'Student', emoji: '👋' };
+  };
+
+  const levelInfo = user ? getAgeLevelInfo(ageLevel) : null;
 
   return (
-    <header className="bg-white shadow-lg sticky top-0 z-50">
+    <header className="fixed top-0 left-0 right-0 z-50 bg-white shadow-lg border-b">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center py-4">
-          {/* Logo with Corporate Branding */}
-          <div className="flex items-center">
-            <Link to="/" className="flex items-center space-x-3">
-              <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center">
-                <BookOpen className="w-7 h-7 text-white" />
-              </div>
-              <div>
-                <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                  TecaiKids
-                </h1>
-                <p className="text-xs text-gray-500 font-medium">A TEC Sri Lanka Worldwide Initiative</p>
-              </div>
-            </Link>
-          </div>
+        <div className="flex justify-between items-center h-16">
+          {/* Logo */}
+          <Link to="/" className="flex items-center space-x-3">
+            <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center">
+              <span className="text-white font-bold text-lg">T</span>
+            </div>
+            <div>
+              <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                TecaiKids
+              </h1>
+              <p className="text-xs text-gray-500 -mt-1">A TEC Sri Lanka Initiative</p>
+            </div>
+          </Link>
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
-            {navItems.map((item) => {
-              const Icon = item.icon;
-              const isActive = location.pathname === item.path;
-              return (
-                <Link
-                  key={item.name}
-                  to={item.path}
-                  className={`flex items-center space-x-2 px-4 py-2 rounded-full transition-all duration-300 ${
-                    isActive 
-                      ? 'bg-blue-100 text-blue-600' 
-                      : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50'
-                  }`}
+            <Link to="/" className="text-gray-700 hover:text-blue-600 font-medium transition-colors">
+              Home
+            </Link>
+            <Link to="/pricing" className="text-gray-700 hover:text-blue-600 font-medium transition-colors">
+              Pricing
+            </Link>
+            <Link to="/courses" className="text-gray-700 hover:text-blue-600 font-medium transition-colors">
+              Courses
+            </Link>
+
+            {user ? (
+              <div className="flex items-center space-x-4">
+                <Link 
+                  to="/unified-dashboard"
+                  className="flex items-center space-x-2 bg-blue-50 hover:bg-blue-100 px-3 py-2 rounded-lg transition-colors"
                 >
-                  <Icon className="w-4 h-4" />
-                  <span className="font-medium">{item.name}</span>
+                  <span>{levelInfo.emoji}</span>
+                  <span className="font-medium text-blue-700">
+                    {user.name.split(' ')[0]}
+                  </span>
                 </Link>
-              );
-            })}
+                <Badge variant="outline" className="text-blue-600 border-blue-300">
+                  {levelInfo.name}
+                </Badge>
+              </div>
+            ) : (
+              <Link to="/unified-age-selector">
+                <Button className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-bold px-6 py-2 rounded-full">
+                  Get Started
+                </Button>
+              </Link>
+            )}
           </nav>
 
-          {/* Desktop CTA Button */}
-          <div className="hidden md:flex items-center space-x-4">
-            <Button className="bg-gradient-to-r from-orange-400 to-pink-500 hover:from-orange-500 hover:to-pink-600 text-white font-semibold px-6 py-2 rounded-full transition-all duration-300 transform hover:scale-105">
-              Start Learning
-            </Button>
-          </div>
-
           {/* Mobile menu button */}
-          <Button
-            variant="ghost"
+          <button 
             className="md:hidden"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
           >
-            {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-          </Button>
+            <svg className="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
         </div>
 
         {/* Mobile Navigation */}
         {isMenuOpen && (
-          <div className="md:hidden py-4 border-t border-gray-200">
-            <nav className="flex flex-col space-y-2">
-              {navItems.map((item) => {
-                const Icon = item.icon;
-                const isActive = location.pathname === item.path;
-                return (
-                  <Link
-                    key={item.name}
-                    to={item.path}
-                    className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-300 ${
-                      isActive 
-                        ? 'bg-blue-100 text-blue-600' 
-                        : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50'
-                    }`}
+          <div className="md:hidden">
+            <div className="px-2 pt-2 pb-3 space-y-1 bg-white border-t">
+              <Link 
+                to="/" 
+                className="block px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Home
+              </Link>
+              <Link 
+                to="/pricing" 
+                className="block px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Pricing
+              </Link>
+              <Link 
+                to="/courses" 
+                className="block px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Courses
+              </Link>
+
+              {user ? (
+                <div className="px-3 py-2 border-t border-gray-200 mt-2">
+                  <div className="flex items-center space-x-3 mb-3">
+                    <span className="text-2xl">{levelInfo.emoji}</span>
+                    <div>
+                      <p className="font-medium text-gray-800">{user.name}</p>
+                      <p className="text-sm text-blue-600">{levelInfo.name}</p>
+                    </div>
+                  </div>
+                  <Link 
+                    to="/unified-dashboard"
+                    className="block w-full text-left px-3 py-2 bg-blue-500 text-white rounded-md font-medium"
                     onClick={() => setIsMenuOpen(false)}
                   >
-                    <Icon className="w-5 h-5" />
-                    <span className="font-medium">{item.name}</span>
+                    Go to Dashboard
                   </Link>
-                );
-              })}
-              <div className="pt-4">
-                <Button className="w-full bg-gradient-to-r from-orange-400 to-pink-500 hover:from-orange-500 hover:to-pink-600 text-white font-semibold py-3 rounded-full">
-                  Start Learning
-                </Button>
-              </div>
-            </nav>
+                </div>
+              ) : (
+                <div className="px-3 py-2 border-t border-gray-200 mt-2">
+                  <Link 
+                    to="/unified-age-selector"
+                    className="block w-full text-center px-3 py-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-md font-bold"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Get Started
+                  </Link>
+                </div>
+              )}
+            </div>
           </div>
         )}
       </div>
