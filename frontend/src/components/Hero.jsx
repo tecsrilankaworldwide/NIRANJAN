@@ -5,6 +5,7 @@ import { Play, Star, Users, BookOpen, Sparkles } from 'lucide-react';
 
 const Hero = () => {
   const [isVisible, setIsVisible] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     setIsVisible(true);
