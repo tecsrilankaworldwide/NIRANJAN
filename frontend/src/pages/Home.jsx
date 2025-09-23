@@ -223,7 +223,7 @@ const Home = () => {
       <section className="py-12 bg-gray-50 border-t">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <p className="text-gray-600 mb-4">
-            <strong>A TEC Sri Lanka Worldwide Initiative</strong>
+            <strong>TEC Sri Lanka Worldwide Initiative</strong>
           </p>
           <div className="flex flex-wrap justify-center items-center gap-8 text-sm text-gray-500">
             <span>🏢 TEC Sri Lanka Worldwide (Pvt.) Ltd</span>
