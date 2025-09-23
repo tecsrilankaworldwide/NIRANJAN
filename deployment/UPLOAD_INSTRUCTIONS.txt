@@ -1,0 +1,112 @@
+🚀 HOSTINGER UPLOAD INSTRUCTIONS FOR TECAIKIDS.COM
+
+===================================================
+QUICK DEPLOYMENT STEPS:
+===================================================
+
+1. LOG INTO HOSTINGER
+   - Go to hpanel.hostinger.com
+   - Use your account credentials
+
+2. ACCESS FILE MANAGER
+   - Click "Websites" in left menu
+   - Select "tecaikids.com" domain
+   - Click "File Manager" button
+
+3. NAVIGATE TO PUBLIC_HTML
+   - Click on "public_html" folder
+   - This is where your website files go
+
+4. UPLOAD FILES
+   - Delete any existing index.html file
+   - Upload these files:
+     ✅ index.html (main website)
+     ✅ contact.php (contact form)
+     ✅ README.md (documentation)
+
+5. SET PERMISSIONS
+   - Right-click contact.php
+   - Set permissions to 755
+
+6. TEST WEBSITE
+   - Visit https://tecaikids.com
+   - Test contact form
+   - Check mobile responsiveness
+
+===================================================
+WHAT'S INCLUDED:
+===================================================
+
+✅ Complete TecaiKids Platform
+   - Kids Platform (Ages 4-12)
+   - Teen Academy (Ages 12-17)
+   - Interactive courses & activities
+   - Age-based learning paths
+
+✅ TEC Sri Lanka Branding
+   - Corporate identity
+   - LKR pricing structure  
+   - Local market positioning
+   - Sri Lankan contact details
+
+✅ Modern Features
+   - Responsive design
+   - Contact form
+   - Smooth navigation
+   - Professional layout
+
+===================================================
+PRICING STRUCTURE:
+===================================================
+
+Ages 5-8:   Monthly LKR 1,000  | Quarterly LKR 4,050
+Ages 9-12:  Monthly LKR 1,500  | Quarterly LKR 5,325  
+Ages 13-16: Monthly LKR 2,500  | Quarterly LKR 7,875
+
+All quarterly plans include:
+- 15% discount on digital content
+- Physical learning materials
+- Free island-wide shipping
+
+===================================================
+IMPORTANT NOTES:
+===================================================
+
+🔧 TECHNICAL SETUP:
+- Ensure PHP is enabled on your hosting
+- Create email account: hello@tecaikids.com
+- Enable SSL certificate for HTTPS
+- Check DNS propagation
+
+📧 EMAIL SETUP:
+- Go to "Email Accounts" in hPanel
+- Create: hello@tecaikids.com
+- Use this for contact form replies
+
+🔒 SECURITY:
+- Contact form includes validation
+- All user inputs are sanitized
+- No sensitive data stored
+
+📱 TESTING CHECKLIST:
+- [ ] Homepage loads correctly
+- [ ] All navigation links work  
+- [ ] Contact form submits
+- [ ] Mobile responsive design
+- [ ] Pricing tables display properly
+- [ ] Corporate branding visible
+
+===================================================
+SUPPORT CONTACT:
+===================================================
+
+If you need help with deployment:
+- Email: hello@tecaikids.com
+- Phone: +94 11 123 KIDS
+
+Company: TEC Sri Lanka Worldwide (Pvt.) Ltd
+Location: Colombo, Sri Lanka
+
+===================================================
+
+🎉 YOUR TECAIKIDS WEBSITE IS READY FOR LAUNCH! 🎉
