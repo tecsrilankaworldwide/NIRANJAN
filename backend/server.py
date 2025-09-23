@@ -1,18 +1,18 @@
-from fastapi import FastAPI, APIRouter, HTTPException
+from fastapi import FastAPI, APIRouter, HTTPException, Request, Form, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from dotenv import load_dotenv
 from motor.motor_asyncio import AsyncIOMotorClient
 import os
 import logging
 from pathlib import Path
 from models import *
-from database import DatabaseManager
-from quiz_data import populate_sample_quizzes
+from unified_database import UnifiedDatabaseManager
+from payment_service import PaymentService
 from course_data import populate_sample_courses
-from teen_models import *
-from teen_database import TeenDatabaseManager
+from quiz_data import populate_sample_quizzes
 from teen_data import populate_teen_sample_data
-from typing import List, Optional
+from typing import List, Optional, Dict, Any
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
@@ -22,8 +22,11 @@ mongo_url = os.environ['MONGO_URL']
 client = AsyncIOMotorClient(mongo_url)
 db = client[os.environ['DB_NAME']]
 
-# Create the main app without a prefix
-app = FastAPI(title="TecaiKids API", version="1.0.0")
+# Initialize Payment Service
+payment_service = PaymentService(db)
+
+# Create the main app
+app = FastAPI(title="TecaiKids Unified API", version="2.0.0", description="Unified TecaiKids Platform API (Ages 4-18)")
 
 # Create a router with the /api prefix
 api_router = APIRouter(prefix="/api")
@@ -40,14 +43,17 @@ app.add_middleware(
 # Basic health check
 @api_router.get("/")
 async def root():
-    return {"message": "TecaiKids API is running!", "version": "1.0.0"}
+    return {"message": "TecaiKids Unified API is running!", "version": "2.0.0", "platform": "Unified Ages 4-18"}
 
-# User Endpoints
+# ================================
+# UNIFIED USER MANAGEMENT
+# ================================
+
 @api_router.post("/users", response_model=User)
 async def create_user(user_data: UserCreate):
-    """Create a new user with age-appropriate level assignment."""
+    """Create a new user with unified age-level assignment (Ages 4-18)."""
     try:
-        user = await DatabaseManager.create_user(user_data)
+        user = await UnifiedDatabaseManager.create_user(user_data)
         return user
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
@@ -55,7 +61,7 @@ async def create_user(user_data: UserCreate):
 @api_router.get("/users/{user_id}", response_model=User)
 async def get_user(user_id: str):
     """Get user by ID."""
-    user = await DatabaseManager.get_user(user_id)
+    user = await UnifiedDatabaseManager.get_user(user_id)
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     return user
@@ -63,66 +69,82 @@ async def get_user(user_id: str):
 @api_router.get("/users/{user_id}/stats", response_model=UserStats)
 async def get_user_stats(user_id: str):
     """Get comprehensive user statistics and progress."""
-    stats = await DatabaseManager.get_user_stats(user_id)
+    stats = await UnifiedDatabaseManager.get_user_stats(user_id)
     if not stats:
         raise HTTPException(status_code=404, detail="User not found")
     return stats
 
-# Age-based Content Endpoints
-@api_router.get("/content/{age_level}", response_model=AgeBasedContent)
-async def get_age_based_content(age_level: AgeLevel):
-    """Get all content appropriate for a specific age level."""
+@api_router.get("/users/{user_id}/dashboard")
+async def get_unified_dashboard(user_id: str):
+    """Get unified dashboard data for any age level."""
     try:
-        content = await DatabaseManager.get_age_based_content(age_level)
+        dashboard_data = await UnifiedDatabaseManager.get_unified_dashboard_data(user_id)
+        if not dashboard_data:
+            raise HTTPException(status_code=404, detail="User not found")
+        return dashboard_data
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+# ================================
+# UNIFIED CONTENT MANAGEMENT
+# ================================
+
+@api_router.get("/content/{age_level}", response_model=AgeBasedContent)
+async def get_age_based_content(age_level: UnifiedAgeLevel):
+    """Get all content appropriate for a specific unified age level."""
+    try:
+        content = await UnifiedDatabaseManager.get_age_based_content(age_level)
         return content
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
-# Course Endpoints
 @api_router.get("/courses", response_model=List[Course])
 async def get_all_courses():
-    """Get all available courses."""
-    courses = await DatabaseManager.get_all_courses()
+    """Get all available courses across all age levels."""
+    courses = await UnifiedDatabaseManager.get_all_courses()
     return courses
 
 @api_router.get("/courses/age/{age_level}", response_model=List[Course])
-async def get_courses_by_age(age_level: AgeLevel):
-    """Get courses filtered by age level."""
-    courses = await DatabaseManager.get_courses_by_age_level(age_level)
+async def get_courses_by_age(age_level: UnifiedAgeLevel):
+    """Get courses filtered by unified age level."""
+    courses = await UnifiedDatabaseManager.get_courses_by_age_level(age_level)
     return courses
 
-@api_router.get("/courses/category/{category}/age/{age_level}", response_model=List[Course])
-async def get_courses_by_category_and_age(category: CourseCategory, age_level: AgeLevel):
-    """Get courses filtered by category and age level."""
-    courses = await DatabaseManager.get_courses_by_category(category, age_level)
+@api_router.get("/courses/category/{category}", response_model=List[Course])
+async def get_courses_by_category(category: CourseCategory, age_level: UnifiedAgeLevel = None):
+    """Get courses filtered by category and optionally age level."""
+    courses = await UnifiedDatabaseManager.get_courses_by_category(category, age_level)
     return courses
 
 @api_router.post("/courses", response_model=Course)
 async def create_course(course_data: CourseCreate):
     """Create a new course."""
     try:
-        course = await DatabaseManager.create_course(course_data)
+        course = await UnifiedDatabaseManager.create_course(course_data)
         return course
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
-# Quiz Endpoints
+# ================================
+# QUIZ MANAGEMENT
+# ================================
+
 @api_router.get("/quizzes/age/{age_level}", response_model=List[Quiz])
-async def get_quizzes_by_age(age_level: AgeLevel):
-    """Get all quizzes for a specific age level."""
-    quizzes = await DatabaseManager.get_quizzes_by_age_level(age_level)
+async def get_quizzes_by_age(age_level: UnifiedAgeLevel):
+    """Get all quizzes for a specific unified age level."""
+    quizzes = await UnifiedDatabaseManager.get_quizzes_by_age_level(age_level)
     return quizzes
 
-@api_router.get("/quizzes/category/{category}/age/{age_level}", response_model=List[Quiz])
-async def get_quizzes_by_category_and_age(category: CourseCategory, age_level: AgeLevel):
-    """Get quizzes filtered by category and age level."""
-    quizzes = await DatabaseManager.get_quizzes_by_category(category, age_level)
+@api_router.get("/quizzes/category/{category}", response_model=List[Quiz])
+async def get_quizzes_by_category(category: CourseCategory, age_level: UnifiedAgeLevel = None):
+    """Get quizzes filtered by category and optionally age level."""
+    quizzes = await UnifiedDatabaseManager.get_quizzes_by_category(category, age_level)
     return quizzes
 
 @api_router.get("/quizzes/{quiz_id}", response_model=Quiz)
 async def get_quiz(quiz_id: str):
     """Get a specific quiz by ID."""
-    quiz = await DatabaseManager.get_quiz(quiz_id)
+    quiz = await UnifiedDatabaseManager.get_quiz(quiz_id)
     if not quiz:
         raise HTTPException(status_code=404, detail="Quiz not found")
     return quiz
@@ -131,20 +153,19 @@ async def get_quiz(quiz_id: str):
 async def create_quiz(quiz_data: QuizCreate):
     """Create a new quiz."""
     try:
-        quiz = await DatabaseManager.create_quiz(quiz_data)
+        quiz = await UnifiedDatabaseManager.create_quiz(quiz_data)
         return quiz
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
-# Quiz Attempt Endpoints
 @api_router.post("/quiz-attempts", response_model=QuizResult)
 async def submit_quiz_attempt(attempt_data: QuizAttemptCreate):
     """Submit a quiz attempt and get results with achievements."""
     try:
-        result = await DatabaseManager.create_quiz_attempt(attempt_data)
+        result = await UnifiedDatabaseManager.create_quiz_attempt(attempt_data)
         
         # Update user progress
-        await DatabaseManager.update_user_progress(
+        await UnifiedDatabaseManager.update_user_progress(
             user_id=attempt_data.user_id,
             quiz_id=attempt_data.quiz_id,
             time_spent=attempt_data.time_taken_seconds // 60
@@ -157,28 +178,236 @@ async def submit_quiz_attempt(attempt_data: QuizAttemptCreate):
 @api_router.get("/users/{user_id}/quiz-attempts", response_model=List[QuizAttempt])
 async def get_user_quiz_attempts(user_id: str):
     """Get all quiz attempts for a user."""
-    attempts = await DatabaseManager.get_user_quiz_attempts(user_id)
+    attempts = await UnifiedDatabaseManager.get_user_quiz_attempts(user_id)
     return attempts
 
-# Leaderboard Endpoints
+# ================================
+# LEADERBOARD & PROGRESS
+# ================================
+
 @api_router.get("/leaderboard/{age_level}", response_model=List[LeaderboardEntry])
-async def get_leaderboard(age_level: AgeLevel, limit: int = 10):
-    """Get leaderboard for specific age level."""
-    leaderboard = await DatabaseManager.get_leaderboard(age_level, limit)
+async def get_leaderboard(age_level: UnifiedAgeLevel, limit: int = 10):
+    """Get leaderboard for specific unified age level."""
+    leaderboard = await UnifiedDatabaseManager.get_leaderboard(age_level, limit)
     return leaderboard
 
-# Progress Tracking
 @api_router.post("/progress")
 async def update_progress(user_id: str, course_id: str = None, quiz_id: str = None, 
                          category: CourseCategory = None, time_spent: int = 0):
     """Update user progress for courses or quizzes."""
     try:
-        await DatabaseManager.update_user_progress(user_id, course_id, quiz_id, category, time_spent)
+        await UnifiedDatabaseManager.update_user_progress(user_id, course_id, quiz_id, category, time_spent)
         return {"message": "Progress updated successfully"}
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
-# Initialize Sample Data Endpoints (for development)
+# ================================
+# PAYMENT & SUBSCRIPTION SYSTEM
+# ================================
+
+@api_router.get("/pricing")
+async def get_pricing_plans():
+    """Get pricing plans for all age levels."""
+    pricing_plans = {}
+    for age_level in UnifiedAgeLevel:
+        plan = payment_service.get_pricing_plan(age_level)
+        if plan:
+            pricing_plans[age_level.value] = plan.dict()
+    return {"pricing_plans": pricing_plans}
+
+@api_router.get("/pricing/{age_level}")
+async def get_pricing_plan(age_level: UnifiedAgeLevel):
+    """Get pricing plan for specific age level."""
+    plan = payment_service.get_pricing_plan(age_level)
+    if not plan:
+        raise HTTPException(status_code=404, detail="Pricing plan not found")
+    return plan.dict()
+
+@api_router.post("/payments/stripe", response_model=PaymentResponse)
+async def create_stripe_payment(payment_request: PaymentRequest, request: Request):
+    """Create Stripe checkout session."""
+    try:
+        host_url = str(request.base_url).rstrip('/')
+        response = await payment_service.create_stripe_payment(payment_request, host_url)
+        return response
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@api_router.post("/payments/bank-transfer", response_model=PaymentResponse)
+async def create_bank_transfer_payment(payment_request: PaymentRequest):
+    """Create bank transfer payment."""
+    try:
+        response = await payment_service.create_bank_transfer_payment(payment_request)
+        return response
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@api_router.post("/payments/ezcash", response_model=PaymentResponse)
+async def create_ezcash_payment(payment_request: PaymentRequest):
+    """Create eZ Cash payment."""
+    try:
+        response = await payment_service.create_ezcash_payment(payment_request)
+        return response
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@api_router.get("/payments/status/{session_id}")
+async def get_payment_status(session_id: str):
+    """Get payment status for a session."""
+    try:
+        status = await payment_service.get_payment_status(session_id)
+        return status
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@api_router.post("/webhook/stripe")
+async def stripe_webhook(request: Request, background_tasks: BackgroundTasks):
+    """Handle Stripe webhook events."""
+    try:
+        webhook_body = await request.body()
+        signature = request.headers.get("Stripe-Signature", "")
+        
+        # Process webhook in background
+        background_tasks.add_task(
+            payment_service.handle_stripe_webhook,
+            webhook_body,
+            signature
+        )
+        
+        return {"status": "success"}
+    except Exception as e:
+        logger.error(f"Stripe webhook error: {e}")
+        raise HTTPException(status_code=400, detail=str(e))
+
+@api_router.get("/subscriptions/{user_id}")
+async def get_user_subscription(user_id: str):
+    """Get user subscription details."""
+    try:
+        subscription_data = await db.subscriptions.find_one({"user_id": user_id, "status": SubscriptionStatus.ACTIVE})
+        if subscription_data:
+            return Subscription(**subscription_data).dict()
+        return {"message": "No active subscription found"}
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@api_router.get("/workbook-deliveries/{user_id}")
+async def get_user_workbook_deliveries(user_id: str):
+    """Get user workbook delivery history."""
+    try:
+        deliveries = await db.workbook_deliveries.find({"user_id": user_id}).sort("created_at", -1).to_list(length=None)
+        return {"deliveries": [WorkbookDelivery(**delivery).dict() for delivery in deliveries]}
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+# ================================
+# UNIFIED AGE LEVELS & METADATA
+# ================================
+
+@api_router.get("/age-levels")
+async def get_unified_age_levels():
+    """Get all available unified age levels."""
+    return {
+        "age_levels": [
+            {
+                "value": UnifiedAgeLevel.LITTLE_LEARNERS,
+                "label": "Little Learners (Ages 4-6)",
+                "description": "Fun basics for little learners",
+                "icon": "🌟",
+                "skills": ["Numbers 1-10", "Letters & Sounds", "Colors & Shapes", "Logical Thinking Basics"]
+            },
+            {
+                "value": UnifiedAgeLevel.YOUNG_EXPLORERS,
+                "label": "Young Explorers (Ages 7-9)",
+                "description": "Building foundational skills",
+                "icon": "🚀",
+                "skills": ["Math & Reading", "Science Basics", "Creative Projects", "Logical Thinking Development"]
+            },
+            {
+                "value": UnifiedAgeLevel.SMART_KIDS,
+                "label": "Smart Kids (Ages 10-12)",
+                "description": "Advanced concepts and challenges",
+                "icon": "⚡",
+                "skills": ["Advanced Math", "Coding Basics", "STEM Projects", "Algorithmic Thinking"]
+            },
+            {
+                "value": UnifiedAgeLevel.TECH_TEENS,
+                "label": "Tech Teens (Ages 13-15)",
+                "description": "Technology and programming skills",
+                "icon": "💻",
+                "skills": ["Programming", "Web Development", "Digital Literacy", "Advanced Algorithms"]
+            },
+            {
+                "value": UnifiedAgeLevel.FUTURE_LEADERS,
+                "label": "Future Leaders (Ages 16-18)",
+                "description": "Advanced technology and leadership",
+                "icon": "🎯",
+                "skills": ["AI & Machine Learning", "App Development", "Leadership Skills", "Complex Problem Solving"]
+            }
+        ]
+    }
+
+@api_router.get("/categories")
+async def get_categories():
+    """Get all available course categories."""
+    return {
+        "categories": [
+            {"value": CourseCategory.MATH, "label": "Math", "icon": "🔢"},
+            {"value": CourseCategory.SCIENCE, "label": "Science", "icon": "🔬"},
+            {"value": CourseCategory.ENGLISH, "label": "English", "icon": "📚"},
+            {"value": CourseCategory.ART, "label": "Art", "icon": "🎨"},
+            {"value": CourseCategory.CODING, "label": "Coding", "icon": "💻"},
+            {"value": CourseCategory.MUSIC, "label": "Music", "icon": "🎵"},
+            {"value": CourseCategory.LOGICAL_THINKING, "label": "Logical Thinking", "icon": "🧠"},
+            {"value": CourseCategory.ALGORITHMIC_THINKING, "label": "Algorithmic Thinking", "icon": "⚙️"}
+        ]
+    }
+
+@api_router.get("/payment-methods")
+async def get_payment_methods():
+    """Get available payment methods."""
+    return {
+        "payment_methods": [
+            {
+                "value": PaymentMethod.STRIPE,
+                "label": "Credit/Debit Card",
+                "description": "Secure online payment via Stripe",
+                "icon": "💳",
+                "available": True
+            },
+            {
+                "value": PaymentMethod.BANK_TRANSFER,
+                "label": "Bank Transfer",
+                "description": "Direct transfer to Bank of Ceylon",
+                "icon": "🏦",
+                "available": True,
+                "bank_details": {
+                    "bank_name": "Bank of Ceylon",
+                    "account_holder": "TEC Sri Lanka Worldwide (Pvt.) Ltd"
+                }
+            },
+            {
+                "value": PaymentMethod.EZCASH,
+                "label": "eZ Cash",
+                "description": "Mobile payment via eZ Cash",
+                "icon": "📱",
+                "available": False,
+                "coming_soon": True
+            },
+            {
+                "value": PaymentMethod.MCASH,
+                "label": "mCash",
+                "description": "Mobile payment via mCash",
+                "icon": "📱",
+                "available": False,
+                "coming_soon": True
+            }
+        ]
+    }
+
+# ================================
+# SAMPLE DATA INITIALIZATION
+# ================================
+
 @api_router.post("/init/courses")
 async def initialize_courses():
     """Initialize sample courses (development only)."""
@@ -214,268 +443,6 @@ async def initialize_all_data():
         await populate_sample_quizzes()
         await populate_teen_sample_data()
         return {"message": "All sample data initialized successfully"}
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
-
-# ================================
-# TEEN PLATFORM API ENDPOINTS
-# ================================
-
-# Teen User Endpoints
-@api_router.post("/teen/users", response_model=TeenUser)
-async def create_teen_user(user_data: TeenUserCreate):
-    """Create a new teen user with age-appropriate level assignment."""
-    try:
-        user = await TeenDatabaseManager.create_teen_user(user_data)
-        return user
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
-
-@api_router.get("/teen/users/{user_id}", response_model=TeenUser)
-async def get_teen_user(user_id: str):
-    """Get teen user by ID."""
-    user = await TeenDatabaseManager.get_teen_user(user_id)
-    if not user:
-        raise HTTPException(status_code=404, detail="Teen user not found")
-    return user
-
-@api_router.get("/teen/users/{user_id}/dashboard", response_model=TeenDashboardData)
-async def get_teen_dashboard(user_id: str):
-    """Get comprehensive dashboard data for teen user."""
-    try:
-        dashboard = await TeenDatabaseManager.get_teen_dashboard_data(user_id)
-        if not dashboard:
-            raise HTTPException(status_code=404, detail="Teen user not found")
-        return dashboard
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
-
-# Teen Course Endpoints
-@api_router.get("/teen/courses", response_model=List[TeenCourse])
-async def get_all_teen_courses():
-    """Get all available teen courses."""
-    courses = await TeenDatabaseManager.get_all_teen_courses()
-    return courses
-
-@api_router.get("/teen/courses/age/{age_level}", response_model=List[TeenCourse])
-async def get_teen_courses_by_age(age_level: TeenAgeLevel):
-    """Get teen courses filtered by age level."""
-    courses = await TeenDatabaseManager.get_teen_courses_by_age_level(age_level)
-    return courses
-
-@api_router.get("/teen/courses/category/{category}", response_model=List[TeenCourse])
-async def get_teen_courses_by_category(category: TeenCourseCategory, age_level: TeenAgeLevel = None):
-    """Get teen courses filtered by category and optionally age level."""
-    courses = await TeenDatabaseManager.get_teen_courses_by_category(category, age_level)
-    return courses
-
-@api_router.post("/teen/courses", response_model=TeenCourse)
-async def create_teen_course(course_data: TeenCourseCreate):
-    """Create a new teen course."""
-    try:
-        course = await TeenDatabaseManager.create_teen_course(course_data)
-        return course
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
-
-# Teen Project Endpoints
-@api_router.get("/teen/users/{user_id}/projects", response_model=List[TeenProject])
-async def get_student_projects(user_id: str):
-    """Get all projects for a teen student."""
-    projects = await TeenDatabaseManager.get_student_projects(user_id)
-    return projects
-
-@api_router.post("/teen/projects")
-async def create_teen_project(project_data: dict):
-    """Create a new teen project."""
-    try:
-        project = await TeenDatabaseManager.create_teen_project(project_data)
-        return project
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
-
-@api_router.put("/teen/projects/{project_id}/status")
-async def update_project_status(project_id: str, status: str, score: int = None, feedback: str = None):
-    """Update project status and scoring."""
-    try:
-        await TeenDatabaseManager.update_project_status(project_id, status, score, feedback)
-        return {"message": "Project status updated successfully"}
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
-
-# Coding Challenge Endpoints
-@api_router.get("/teen/challenges/difficulty/{difficulty}", response_model=List[CodingChallenge])
-async def get_coding_challenges_by_difficulty(difficulty: TeenDifficultyLevel):
-    """Get coding challenges by difficulty level."""
-    challenges = await TeenDatabaseManager.get_coding_challenges_by_difficulty(difficulty)
-    return challenges
-
-@api_router.post("/teen/challenges", response_model=CodingChallenge)
-async def create_coding_challenge(challenge_data: dict):
-    """Create a new coding challenge."""
-    try:
-        challenge = await TeenDatabaseManager.create_coding_challenge(challenge_data)
-        return challenge
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
-
-@api_router.post("/teen/challenges/submit", response_model=CodingSubmission)
-async def submit_coding_solution(submission_data: dict):
-    """Submit a coding solution."""
-    try:
-        submission = await TeenDatabaseManager.submit_coding_solution(submission_data)
-        return submission
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
-
-# Mentorship Endpoints
-@api_router.post("/teen/mentors", response_model=Mentor)
-async def create_mentor(mentor_data: dict):
-    """Create a new mentor."""
-    try:
-        mentor = await TeenDatabaseManager.create_mentor(mentor_data)
-        return mentor
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
-
-@api_router.post("/teen/mentorship/sessions", response_model=MentorshipSession)
-async def schedule_mentorship_session(session_data: dict):
-    """Schedule a mentorship session."""
-    try:
-        session = await TeenDatabaseManager.schedule_mentorship_session(session_data)
-        return session
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
-
-@api_router.get("/teen/users/{user_id}/mentorship", response_model=List[MentorshipSession])
-async def get_student_mentorship_sessions(user_id: str):
-    """Get mentorship sessions for a student."""
-    sessions = await TeenDatabaseManager.get_student_mentorship_sessions(user_id)
-    return sessions
-
-# Portfolio Endpoints
-@api_router.get("/teen/users/{user_id}/portfolio", response_model=TeenPortfolio)
-async def get_student_portfolio(user_id: str):
-    """Get student portfolio."""
-    portfolio = await TeenDatabaseManager.get_student_portfolio(user_id)
-    if not portfolio:
-        raise HTTPException(status_code=404, detail="Portfolio not found")
-    return portfolio
-
-@api_router.post("/teen/portfolios", response_model=TeenPortfolio)
-async def create_teen_portfolio(portfolio_data: dict):
-    """Create a new teen portfolio."""
-    try:
-        portfolio = await TeenDatabaseManager.create_teen_portfolio(portfolio_data)
-        return portfolio
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
-
-@api_router.put("/teen/users/{user_id}/portfolio")
-async def update_portfolio(user_id: str, update_data: dict):
-    """Update student portfolio."""
-    try:
-        await TeenDatabaseManager.update_portfolio(user_id, update_data)
-        return {"message": "Portfolio updated successfully"}
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
-
-# Teen Platform Statistics
-@api_router.get("/teen/stats", response_model=TeenStats)
-async def get_teen_platform_stats():
-    """Get teen platform statistics."""
-    try:
-        stats = await TeenDatabaseManager.get_teen_platform_stats()
-        return stats
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
-
-# Teen Age Levels and Categories
-@api_router.get("/teen/age-levels")
-async def get_teen_age_levels():
-    """Get all available teen age levels."""
-    return {
-        "age_levels": [
-            {"value": TeenAgeLevel.MIDDLE_TEEN, "label": "Middle Teen (12-14 years)", "description": "Foundation skills and project-based learning"},
-            {"value": TeenAgeLevel.HIGH_TEEN, "label": "High Teen (15-17 years)", "description": "Advanced concepts and career preparation"}
-        ]
-    }
-
-@api_router.get("/teen/categories")
-async def get_teen_categories():
-    """Get all available teen course categories."""
-    return {
-        "categories": [
-            {"value": TeenCourseCategory.CODING, "label": "Advanced Coding", "icon": "💻"},
-            {"value": TeenCourseCategory.ROBOTICS, "label": "Robotics & AI", "icon": "🤖"},
-            {"value": TeenCourseCategory.APP_DEV, "label": "Mobile Development", "icon": "📱"},
-            {"value": TeenCourseCategory.WEB_DEV, "label": "Web Development", "icon": "🌐"},
-            {"value": TeenCourseCategory.DATA_SCIENCE, "label": "Data Science", "icon": "📊"},
-            {"value": TeenCourseCategory.GAME_DEV, "label": "Game Development", "icon": "🎮"},
-            {"value": TeenCourseCategory.CYBERSECURITY, "label": "Cybersecurity", "icon": "🔒"},
-            {"value": TeenCourseCategory.ENTREPRENEURSHIP, "label": "Digital Entrepreneurship", "icon": "🚀"},
-            {"value": TeenCourseCategory.CAREER_PREP, "label": "Career Preparation", "icon": "🎯"}
-        ]
-    }
-
-# Age Level Helper Endpoints
-@api_router.get("/age-levels")
-async def get_age_levels():
-    """Get all available age levels."""
-    return {
-        "age_levels": [
-            {"value": AgeLevel.PRESCHOOL, "label": "Preschool (4-6 years)", "description": "Fun basics for little learners"},
-            {"value": AgeLevel.ELEMENTARY, "label": "Elementary (7-9 years)", "description": "Building foundational skills"},
-            {"value": AgeLevel.INTERMEDIATE, "label": "Intermediate (10-12 years)", "description": "Advanced concepts and challenges"}
-        ]
-    }
-
-@api_router.get("/categories")
-async def get_categories():
-    """Get all available course categories."""
-    return {
-        "categories": [
-            {"value": CourseCategory.MATH, "label": "Math", "icon": "🔢"},
-            {"value": CourseCategory.SCIENCE, "label": "Science", "icon": "🔬"},
-            {"value": CourseCategory.ENGLISH, "label": "English", "icon": "📚"},
-            {"value": CourseCategory.ART, "label": "Art", "icon": "🎨"},
-            {"value": CourseCategory.CODING, "label": "Coding", "icon": "💻"},
-            {"value": CourseCategory.MUSIC, "label": "Music", "icon": "🎵"}
-        ]
-    }
-
-# Dashboard Data
-@api_router.get("/dashboard/{user_id}")
-async def get_user_dashboard(user_id: str):
-    """Get comprehensive dashboard data for a user."""
-    try:
-        user = await DatabaseManager.get_user(user_id)
-        if not user:
-            raise HTTPException(status_code=404, detail="User not found")
-        
-        # Get age-appropriate content
-        content = await DatabaseManager.get_age_based_content(user.age_level)
-        
-        # Get user stats
-        stats = await DatabaseManager.get_user_stats(user_id)
-        
-        # Get recent quiz attempts
-        recent_attempts = await DatabaseManager.get_user_quiz_attempts(user_id)
-        recent_attempts = recent_attempts[:5]  # Last 5 attempts
-        
-        # Get leaderboard position
-        leaderboard = await DatabaseManager.get_leaderboard(user.age_level, 100)
-        user_rank = next((entry.rank for entry in leaderboard if entry.user_id == user_id), None)
-        
-        return {
-            "user": user,
-            "stats": stats,
-            "content": content,
-            "recent_attempts": recent_attempts,
-            "leaderboard_rank": user_rank,
-            "recommended_quizzes": content.quizzes[:3],  # Top 3 recommended
-            "recommended_courses": content.courses[:3]   # Top 3 recommended
-        }
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
