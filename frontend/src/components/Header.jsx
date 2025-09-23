@@ -9,8 +9,8 @@ const Header = () => {
 
   const navItems = [
     { name: 'Home', path: '/', icon: BookOpen },
-    { name: 'Courses', path: '/courses', icon: BookOpen },
-    { name: 'Activities', path: '/activities', icon: Star },
+    { name: 'Kids Courses', path: '/courses', icon: BookOpen },
+    { name: 'Teen Academy', path: '/teen-selector', icon: Star },
     { name: 'About', path: '/about', icon: Users },
     { name: 'Contact', path: '/contact', icon: Phone }
   ];
@@ -19,7 +19,7 @@ const Header = () => {
     <header className="bg-white shadow-lg sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center py-4">
-          {/* Logo */}
+          {/* Logo with Corporate Branding */}
           <div className="flex items-center">
             <Link to="/" className="flex items-center space-x-3">
               <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center">
@@ -29,7 +29,7 @@ const Header = () => {
                 <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                   TecaiKids
                 </h1>
-                <p className="text-sm text-gray-600">Learn & Grow</p>
+                <p className="text-xs text-gray-500 font-medium">A TEC Sri Lanka Worldwide Initiative</p>
               </div>
             </Link>
           </div>
