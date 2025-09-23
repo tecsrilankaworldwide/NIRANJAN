@@ -101,3 +101,164 @@
 #====================================================================================================
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
+
+## user_problem_statement: |
+  User wants to unify the existing dual-platform TecaiKids educational website into one comprehensive 
+  platform covering ages 4-16 with unified age-based levels: Little Learners (4-6), Young Explorers (7-9), 
+  Smart Kids (10-12), Tech Teens (13-15), Future Leaders (16+). The platform needs comprehensive payment 
+  integration including Stripe, Bank of Ceylon transfer, eZ Cash, and quarterly subscription system with 
+  physical workbook delivery designed by ex-NIE educationist. Both platform unification AND payment 
+  system integration are required.
+
+## backend:
+  - task: "Unified User Management System"
+    implemented: false
+    working: false
+    file: "backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: false
+          agent: "main"
+          comment: "Need to merge separate kid/teen APIs into unified age-based system"
+
+  - task: "Payment Integration - Stripe"
+    implemented: false
+    working: false
+    file: "backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: false
+          agent: "main"
+          comment: "Stripe integration needed for credit card payments"
+
+  - task: "Payment Integration - Bank Transfer"
+    implemented: false
+    working: false
+    file: "backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: false
+          agent: "main"
+          comment: "Bank of Ceylon transfer integration needed"
+
+  - task: "Payment Integration - eZ Cash"
+    implemented: false
+    working: false
+    file: "backend/server.py"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: true
+    status_history:
+        - working: false
+          agent: "main"
+          comment: "eZ Cash Sri Lankan payment method integration needed"
+
+  - task: "Quarterly Subscription System"
+    implemented: false
+    working: false
+    file: "backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: false
+          agent: "main"
+          comment: "Subscription management with quarterly billing and workbook delivery tracking"
+
+  - task: "Workbook Management System"
+    implemented: false
+    working: false
+    file: "backend/server.py"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: true
+    status_history:
+        - working: false
+          agent: "main"
+          comment: "Track physical workbook delivery every 3 months for all age groups"
+
+## frontend:
+  - task: "Unified Age Selector"
+    implemented: false
+    working: false
+    file: "frontend/src/pages/UnifiedAgeSelector.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: false
+          agent: "main"
+          comment: "Merge AgeSelector and TeenSelector into one unified component with 5 age levels"
+
+  - task: "Unified Dashboard"
+    implemented: false
+    working: false
+    file: "frontend/src/pages/UnifiedDashboard.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: false
+          agent: "main"
+          comment: "Single dashboard that adapts content based on age level (4-16)"
+
+  - task: "Payment Integration UI"
+    implemented: false
+    working: false
+    file: "frontend/src/components/PaymentComponent.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: false
+          agent: "main"
+          comment: "Payment selection UI for Stripe, Bank transfer, eZ Cash"
+
+  - task: "Subscription Management UI"
+    implemented: false
+    working: false
+    file: "frontend/src/components/SubscriptionManager.jsx"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: true
+    status_history:
+        - working: false
+          agent: "main"
+          comment: "Quarterly subscription and workbook tracking interface"
+
+  - task: "Updated Navigation"
+    implemented: false
+    working: false
+    file: "frontend/src/App.js"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: true
+    status_history:
+        - working: false
+          agent: "main"
+          comment: "Update routing to use unified components instead of separate kid/teen paths"
+
+## metadata:
+  created_by: "main_agent"
+  version: "1.0"
+  test_sequence: 0
+  run_ui: false
+
+## test_plan:
+  current_focus:
+    - "Unified User Management System"
+    - "Unified Age Selector"
+    - "Payment Integration - Stripe"
+  stuck_tasks: []
+  test_all: false
+  test_priority: "high_first"
+
+## agent_communication:
+    - agent: "main"
+      message: "Starting unified TecaiKids platform implementation. Need to merge dual platform into single age-based system (4-16) with comprehensive payment integration and quarterly subscription system."
