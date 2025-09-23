@@ -35,7 +35,7 @@ const Header = () => {
               <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                 TecaiKids
               </h1>
-              <p className="text-xs text-gray-500 -mt-1">A TEC Sri Lanka Initiative</p>
+              <p className="text-xs text-gray-500 -mt-1">TEC Sri Lanka Worldwide Initiative</p>
             </div>
           </Link>
 
