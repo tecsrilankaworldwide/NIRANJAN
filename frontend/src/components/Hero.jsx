@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from './ui/button';
 import { Play, Star, Users, BookOpen, Sparkles } from 'lucide-react';
 
