@@ -142,7 +142,7 @@ const Footer = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <p className="text-gray-400 text-sm">
-              © 2024 TecaiKids. All rights reserved. Made with ❤️ for children everywhere.
+              © 2024 TEC Sri Lanka Worldwide (Pvt.) Ltd. All rights reserved. Made with ❤️ for Sri Lankan families.
             </p>
             <div className="flex space-x-6 mt-4 md:mt-0">
               <Link to="/privacy" className="text-gray-400 hover:text-white text-sm transition-colors duration-300">
