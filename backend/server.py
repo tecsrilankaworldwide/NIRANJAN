@@ -9,6 +9,9 @@ from models import *
 from database import DatabaseManager
 from quiz_data import populate_sample_quizzes
 from course_data import populate_sample_courses
+from teen_models import *
+from teen_database import TeenDatabaseManager
+from teen_data import populate_teen_sample_data
 from typing import List, Optional
 
 ROOT_DIR = Path(__file__).parent
