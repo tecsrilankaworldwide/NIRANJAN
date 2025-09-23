@@ -58,12 +58,19 @@ const Hero = () => {
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 mb-12">
-              <Button className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-bold py-4 px-8 rounded-full text-lg transition-all duration-300 transform hover:scale-105 shadow-lg">
+              <Button 
+                onClick={() => navigate('/age-selector')}
+                className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-bold py-4 px-8 rounded-full text-lg transition-all duration-300 transform hover:scale-105 shadow-lg"
+              >
                 <Play className="w-5 h-5 mr-2" />
-                Start Free Trial
+                Kids Platform (4-12)
               </Button>
-              <Button variant="outline" className="border-2 border-gray-300 text-gray-700 font-bold py-4 px-8 rounded-full text-lg hover:border-purple-400 hover:text-purple-600 transition-all duration-300">
-                Watch Demo
+              <Button 
+                onClick={() => navigate('/teen-selector')}
+                className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold py-4 px-8 rounded-full text-lg transition-all duration-300 transform hover:scale-105 shadow-lg"
+              >
+                <Play className="w-5 h-5 mr-2" />
+                Teen Platform (12-17)
               </Button>
             </div>
 
