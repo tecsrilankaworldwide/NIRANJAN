@@ -1,0 +1,96 @@
+🏷️ TECAIKIDS PRICING EDITOR GUIDE
+=====================================
+
+✅ YES! You can edit pricing anytime easily!
+
+📍 WHERE TO EDIT PRICING:
+Open: index.html
+Find: Line ~680 (search for "// Pricing data")
+Edit: The pricingData object
+
+💰 CURRENT PRICING STRUCTURE:
+============================
+
+Ages 4-6:   Monthly LKR 800   | Quarterly LKR 2,800   (Save LKR 600)
+Ages 7-9:   Monthly LKR 1,200 | Quarterly LKR 4,200   (Save LKR 900)  
+Ages 10-12: Monthly LKR 1,500 | Quarterly LKR 5,250   (Save LKR 1,250)
+Ages 12-13: Monthly LKR 2,000 | Quarterly LKR 7,000   (Save LKR 1,500)
+Ages 14-16: Monthly LKR 2,500 | Quarterly LKR 8,750   (Save LKR 2,250)
+
+🔧 HOW TO CHANGE PRICES:
+=======================
+
+1. Open index.html in any text editor
+2. Find the pricingData section (around line 680)
+3. Edit the prices like this:
+
+EXAMPLE:
+--------
+'4-6': {
+    monthly: 'LKR 900',        ← Change this
+    quarterly: 'LKR 3,150',    ← Change this
+    digital: 'LKR 2,025',      ← Change this  
+    savings: 'Save LKR 675',   ← Change this
+    ...
+
+🎯 THINKING SKILLS ADDED:
+========================
+
+✅ ALL AGE GROUPS NOW INCLUDE:
+- Logical Thinking (all ages 4-16)
+
+✅ UPPER AGES (10+) INCLUDE:
+- Algorithmic Thinking
+- Data Structures & Algorithms (14-16)
+- Complex Algorithmic Thinking (14-16)
+
+📝 FEATURES BY AGE GROUP:
+========================
+
+Ages 4-6: Logical thinking basics + Logic puzzle games
+Ages 7-9: Logical thinking development + Logic & puzzle games  
+Ages 10-12: Logical thinking mastery + Algorithmic thinking basics
+Ages 12-13: Advanced logical thinking + Algorithmic thinking
+Ages 14-16: Advanced logical + Complex algorithmic thinking
+
+💻 COMPLETE SOURCE CODE INCLUDED:
+================================
+
+✅ YOU GET EVERYTHING:
+- Complete HTML website (index.html)
+- Working contact form (contact.php)  
+- All CSS styles (embedded)
+- All JavaScript functions (embedded)
+- Mobile responsive design
+- TEC Sri Lanka branding
+- 5 age group pricing system
+
+✅ YOU CAN MODIFY:
+- Pricing anytime
+- Content/text
+- Colors/design  
+- Add new features
+- Add new age groups
+- Change company details
+- Customize anything!
+
+🛠️ EASY CUSTOMIZATION:
+======================
+
+PRICING: Edit pricingData object
+COLORS: Change gradient classes (from-blue-500 to-purple-600)
+CONTENT: Edit any text directly in HTML
+CONTACT: Change email in contact.php
+FEATURES: Add/remove from monthlyFeatures & quarterlyFeatures arrays
+
+📞 SUPPORT:
+==========
+All source code is yours to modify as needed!
+No restrictions, full ownership of all code.
+
+🚀 READY TO DEPLOY!
+Your complete TecaiKids platform with:
+- Logical thinking in all ages
+- Algorithmic thinking for older kids  
+- Fully editable pricing
+- Complete source code ownership
