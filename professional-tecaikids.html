@@ -1,0 +1,2139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TecaiKids - Professional Learning Platform | TEC Sri Lanka Worldwide</title>
+    <meta name="description" content="Sri Lanka's premier educational platform for ages 4-18. Interactive learning with logical thinking, coding, AI, and career preparation.">
+    
+    <!-- Advanced CSS Framework -->
+    <style>
+        :root {
+            --primary-blue: #2563eb;
+            --primary-purple: #8b5cf6;
+            --secondary-green: #059669;
+            --accent-orange: #f97316;
+            --accent-pink: #ec4899;
+            --neutral-gray: #6b7280;
+            --light-bg: #f8fafc;
+            --white: #ffffff;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --error: #ef4444;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.6;
+            color: #1f2937;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* Advanced Header with Glassmorphism */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .logo-icon {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-purple));
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: white;
+            box-shadow: 0 8px 32px rgba(37, 99, 235, 0.3);
+        }
+
+        .logo-text h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .logo-text p {
+            font-size: 0.875rem;
+            color: var(--neutral-gray);
+            font-weight: 500;
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-menu a {
+            color: #374151;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-menu a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-purple));
+            transition: width 0.3s ease;
+        }
+
+        .nav-menu a:hover::after {
+            width: 100%;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: none;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-purple));
+            color: white;
+            box-shadow: 0 4px 20px rgba(37, 99, 235, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 32px rgba(37, 99, 235, 0.6);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--primary-blue);
+            border: 2px solid var(--primary-blue);
+        }
+
+        .btn-outline:hover {
+            background: var(--primary-blue);
+            color: white;
+        }
+
+        /* Advanced Hero Section */
+        .hero {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #dbeafe 0%, #e0e7ff 30%, #fce7f3 70%, #fef3c7 100%);
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="%23ffffff" opacity="0.1"/><circle cx="75" cy="75" r="1" fill="%23ffffff" opacity="0.1"/><circle cx="50" cy="10" r="1" fill="%23ffffff" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>') repeat;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto;
+            padding-top: 100px;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 8px 16px;
+            border-radius: 50px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--primary-blue);
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 800;
+            line-height: 1.2;
+            margin-bottom: 1.5rem;
+            color: #1f2937;
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-purple), var(--accent-pink));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: var(--neutral-gray);
+            margin-bottom: 3rem;
+            line-height: 1.7;
+        }
+
+        .hero-cta {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 3rem;
+        }
+
+        .hero-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 2rem;
+            margin-top: 4rem;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--primary-blue);
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: var(--neutral-gray);
+            font-weight: 500;
+        }
+
+        /* Advanced Age Levels Grid */
+        .age-levels {
+            padding: 120px 0;
+            background: var(--light-bg);
+            position: relative;
+        }
+
+        .section-header {
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto 5rem;
+        }
+
+        .section-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-purple));
+            color: white;
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .section-title {
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            color: #1f2937;
+        }
+
+        .section-description {
+            font-size: 1.125rem;
+            color: var(--neutral-gray);
+            line-height: 1.7;
+        }
+
+        .age-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+
+        .age-card {
+            background: white;
+            border-radius: 24px;
+            padding: 2.5rem;
+            position: relative;
+            box-shadow: 0 4px 32px rgba(0, 0, 0, 0.08);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 2px solid transparent;
+            cursor: pointer;
+            overflow: hidden;
+        }
+
+        .age-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--card-gradient, linear-gradient(135deg, var(--primary-blue), var(--primary-purple)));
+        }
+
+        .age-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+            border-color: var(--primary-blue);
+        }
+
+        .age-card.selected {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 60px rgba(37, 99, 235, 0.3);
+            border-color: var(--primary-blue);
+        }
+
+        .age-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 2rem;
+            font-size: 2.5rem;
+            background: var(--card-gradient, linear-gradient(135deg, var(--primary-blue), var(--primary-purple)));
+            box-shadow: 0 8px 32px rgba(37, 99, 235, 0.3);
+        }
+
+        /* Age-specific gradients */
+        .little-learners { --card-gradient: linear-gradient(135deg, #fbbf24, #f97316); }
+        .young-explorers { --card-gradient: linear-gradient(135deg, #3b82f6, #8b5cf6); }
+        .smart-kids { --card-gradient: linear-gradient(135deg, #8b5cf6, #ec4899); }
+        .tech-teens { --card-gradient: linear-gradient(135deg, #4f46e5, #3b82f6); }
+        .future-leaders { --card-gradient: linear-gradient(135deg, #059669, #0891b2); }
+
+        .age-card h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 0.5rem;
+            color: #1f2937;
+        }
+
+        .age-range {
+            text-align: center;
+            color: var(--primary-blue);
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+        }
+
+        .pricing-display {
+            text-align: center;
+            margin: 1.5rem 0;
+            padding: 1rem;
+            background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+            border-radius: 12px;
+        }
+
+        .price-monthly, .price-quarterly {
+            font-weight: 700;
+            margin: 0.25rem 0;
+        }
+
+        .price-monthly {
+            font-size: 1.25rem;
+            color: var(--primary-blue);
+        }
+
+        .price-quarterly {
+            font-size: 1.125rem;
+            color: var(--secondary-green);
+        }
+
+        .savings {
+            font-size: 0.875rem;
+            color: var(--secondary-green);
+            font-weight: 600;
+        }
+
+        .features-list {
+            list-style: none;
+            margin: 1.5rem 0;
+        }
+
+        .features-list li {
+            margin-bottom: 0.75rem;
+            padding-left: 2rem;
+            position: relative;
+            color: #4b5563;
+            font-weight: 500;
+        }
+
+        .features-list li::before {
+            content: "✨";
+            position: absolute;
+            left: 0;
+            font-weight: 600;
+        }
+
+        .features-list a {
+            color: var(--primary-blue);
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+
+        .features-list a:hover {
+            color: var(--primary-purple);
+            text-decoration: underline;
+        }
+
+        /* Advanced Payment Section */
+        .payment-section {
+            padding: 120px 0;
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0e7ff 50%, #fdf4ff 100%);
+            position: relative;
+        }
+
+        .payment-container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .payment-step {
+            background: white;
+            border-radius: 20px;
+            padding: 2.5rem;
+            margin: 2rem 0;
+            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .step-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .step-number {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-purple));
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.25rem;
+        }
+
+        .step-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .age-selection-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .age-selector-btn {
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 16px;
+            padding: 1.5rem 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .age-selector-btn:hover, .age-selector-btn.selected {
+            border-color: var(--primary-blue);
+            background: #dbeafe;
+            transform: translateY(-4px);
+            box-shadow: 0 8px 32px rgba(37, 99, 235, 0.3);
+        }
+
+        .billing-toggle {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+
+        .billing-option {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1.5rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .billing-option:has(input:checked) {
+            border-color: var(--primary-blue);
+            background: #dbeafe;
+        }
+
+        .billing-option input {
+            width: 20px;
+            height: 20px;
+            accent-color: var(--primary-blue);
+        }
+
+        .save-badge {
+            background: var(--secondary-green);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-left: auto;
+        }
+
+        .price-summary {
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-purple));
+            color: white;
+            padding: 2rem;
+            border-radius: 20px;
+            text-align: center;
+            margin: 2rem 0;
+        }
+
+        .summary-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .summary-price {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+        }
+
+        .summary-savings {
+            font-size: 1.125rem;
+            color: #fbbf24;
+            font-weight: 600;
+        }
+
+        .payment-methods {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .payment-method {
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 16px;
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .payment-method.active {
+            border-color: var(--primary-blue);
+            background: #dbeafe;
+        }
+
+        .method-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .method-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .method-icon {
+            font-size: 2rem;
+        }
+
+        .method-details h4 {
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 0.25rem;
+        }
+
+        .method-details p {
+            color: var(--neutral-gray);
+            font-size: 0.875rem;
+        }
+
+        .method-status {
+            font-weight: 600;
+        }
+
+        .method-status.available {
+            color: var(--secondary-green);
+        }
+
+        .method-status.coming-soon {
+            color: var(--warning);
+        }
+
+        .form-section {
+            background: white;
+            border-radius: 20px;
+            padding: 2.5rem;
+            margin: 2rem 0;
+            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #374151;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 1rem 1.25rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .payment-button {
+            width: 100%;
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-purple));
+            color: white;
+            border: none;
+            border-radius: 16px;
+            padding: 1.5rem;
+            font-size: 1.125rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .payment-button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 40px rgba(37, 99, 235, 0.4);
+        }
+
+        .payment-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .security-notice {
+            text-align: center;
+            margin-top: 1rem;
+            color: var(--neutral-gray);
+            font-size: 0.875rem;
+        }
+
+        /* Advanced Features Section */
+        .features-section {
+            padding: 120px 0;
+            background: white;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 3rem;
+        }
+
+        .feature-card {
+            text-align: center;
+            padding: 3rem 2rem;
+            background: linear-gradient(135deg, #fafafa, #f0f0f0);
+            border-radius: 24px;
+            transition: all 0.4s ease;
+            border: 1px solid #e5e7eb;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+        }
+
+        .feature-icon {
+            font-size: 4rem;
+            margin-bottom: 2rem;
+            display: block;
+        }
+
+        .feature-card h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: #1f2937;
+        }
+
+        .feature-card p {
+            color: var(--neutral-gray);
+            line-height: 1.7;
+            margin-bottom: 1.5rem;
+        }
+
+        .feature-list {
+            list-style: none;
+            text-align: left;
+        }
+
+        .feature-list li {
+            margin-bottom: 0.5rem;
+            padding-left: 1.5rem;
+            position: relative;
+            color: #4b5563;
+        }
+
+        .feature-list li::before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            color: var(--primary-blue);
+            font-weight: 600;
+        }
+
+        /* Contact Section */
+        .contact-section {
+            padding: 120px 0;
+            background: var(--light-bg);
+        }
+
+        .contact-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .contact-form {
+            background: white;
+            border-radius: 24px;
+            padding: 3rem;
+            box-shadow: 0 12px 60px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Footer */
+        .footer {
+            background: linear-gradient(135deg, #1f2937, #374151);
+            color: white;
+            padding: 4rem 0 2rem;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 3rem;
+            margin-bottom: 3rem;
+        }
+
+        .footer-section h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .footer-section p,
+        .footer-section li {
+            color: #d1d5db;
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-section ul {
+            list-style: none;
+        }
+
+        .footer-section a {
+            color: #d1d5db;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-section a:hover {
+            color: white;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid #374151;
+            padding-top: 2rem;
+            text-align: center;
+            color: #9ca3af;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav-menu {
+                display: none;
+            }
+            
+            .hero-cta {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .age-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .billing-toggle {
+                grid-template-columns: 1fr;
+            }
+            
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Loading and Animation States */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        .loading {
+            animation: pulse 2s infinite;
+        }
+
+        .fade-in {
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        /* Interactive Elements */
+        .interactive-element {
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .interactive-element:hover {
+            transform: scale(1.02);
+        }
+
+        /* Success/Error States */
+        .success {
+            background-color: #dcfce7;
+            border: 1px solid #bbf7d0;
+            color: #166534;
+            padding: 1rem;
+            border-radius: 12px;
+        }
+
+        .error {
+            background-color: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #dc2626;
+            padding: 1rem;
+            border-radius: 12px;
+        }
+
+        /* Modal/Overlay */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            max-width: 90vw;
+            max-height: 90vh;
+            overflow-y: auto;
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: scale(1);
+        }
+    </style>
+</head>
+<body>
+    <!-- Advanced Header -->
+    <header class="header" id="header">
+        <nav class="nav container">
+            <div class="logo">
+                <div class="logo-icon">T</div>
+                <div class="logo-text">
+                    <h1>TecaiKids</h1>
+                    <p>TEC Sri Lanka Worldwide Initiative</p>
+                </div>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#programs">Programs</a></li>
+                <li><a href="#pricing">Pricing</a></li>
+                <li><a href="#features">Features</a></li>
+                <li><a href="#contact">Contact</a></li>
+                <li><a href="#pricing" class="btn btn-primary">Enroll Now</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Advanced Hero Section -->
+    <section id="home" class="hero">
+        <div class="container">
+            <div class="hero-content fade-in">
+                <div class="hero-badge">
+                    <span>🏆</span>
+                    <span>Sri Lanka's #1 Educational Platform</span>
+                </div>
+                
+                <h1>
+                    Empowering <span class="gradient-text">Sri Lankan Minds</span><br>
+                    Ages 4-18 with Future-Ready Skills
+                </h1>
+                
+                <p>
+                    Professional-grade education platform featuring logical thinking, algorithmic reasoning, 
+                    coding, AI, and career preparation. Designed by education experts specifically for 
+                    Sri Lankan children's success in the digital age.
+                </p>
+                
+                <div class="hero-cta">
+                    <a href="#pricing" class="btn btn-primary">
+                        <span>Start Learning Journey</span>
+                        <span>→</span>
+                    </a>
+                    <a href="#programs" class="btn btn-outline">
+                        <span>Explore Programs</span>
+                    </a>
+                </div>
+                
+                <div class="hero-stats">
+                    <div class="stat">
+                        <span class="stat-number">5,000+</span>
+                        <span class="stat-label">Active Students</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number">98%</span>
+                        <span class="stat-label">Success Rate</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number">15+</span>
+                        <span class="stat-label">Expert Educators</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number">24/7</span>
+                        <span class="stat-label">Support</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Advanced Programs Section -->
+    <section id="programs" class="age-levels">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-badge">Professional Learning Paths</div>
+                <h2 class="section-title">
+                    Choose Your <span class="gradient-text">Excellence Track</span>
+                </h2>
+                <p class="section-description">
+                    Our scientifically-designed curriculum adapts to your child's developmental stage, 
+                    ensuring optimal learning outcomes and future career readiness.
+                </p>
+            </div>
+
+            <div class="age-grid">
+                <!-- Little Learners (4-6) -->
+                <div class="age-card little-learners interactive-element" data-age="4-6" data-monthly="800" data-quarterly="2800" data-savings="600">
+                    <div class="age-icon">🌟</div>
+                    <h3>Little Learners</h3>
+                    <div class="age-range">Ages 4-6 | Foundation Level</div>
+                    <div class="pricing-display">
+                        <div class="price-monthly">LKR 800/month</div>
+                        <div class="price-quarterly">LKR 2,800/quarterly</div>
+                        <div class="savings">Save LKR 600 (21%)</div>
+                    </div>
+                    <ul class="features-list">
+                        <li><a href="#" onclick="showLesson('numbers-letters')">Interactive Number & Letter Recognition</a></li>
+                        <li><a href="#" onclick="showLesson('colors-shapes')">Advanced Color & Shape Theory</a></li>
+                        <li><a href="#" onclick="showLesson('logical-basics')">Foundation Logical Thinking</a></li>
+                        <li><a href="#" onclick="showLesson('creative-games')">Gamified Learning Experiences</a></li>
+                        <li><a href="#" onclick="showLesson('parent-guide')">Expert Parent Guidance</a></li>
+                        <li><a href="#" onclick="showLesson('workbooks')">Premium Physical Workbooks</a></li>
+                    </ul>
+                </div>
+
+                <!-- Young Explorers (7-9) -->
+                <div class="age-card young-explorers interactive-element" data-age="7-9" data-monthly="1200" data-quarterly="4200" data-savings="900">
+                    <div class="age-icon">🚀</div>
+                    <h3>Young Explorers</h3>
+                    <div class="age-range">Ages 7-9 | Discovery Level</div>
+                    <div class="pricing-display">
+                        <div class="price-monthly">LKR 1,200/month</div>
+                        <div class="price-quarterly">LKR 4,200/quarterly</div>
+                        <div class="savings">Save LKR 900 (21%)</div>
+                    </div>
+                    <ul class="features-list">
+                        <li><a href="#" onclick="showLesson('advanced-math')">Advanced Mathematics & Problem Solving</a></li>
+                        <li><a href="#" onclick="showLesson('science-lab')">Virtual Science Laboratory</a></li>
+                        <li><a href="#" onclick="showLesson('reading-comp')">Critical Reading & Comprehension</a></li>
+                        <li><a href="#" onclick="showLesson('logical-dev')">Intermediate Logical Thinking</a></li>
+                        <li><a href="#" onclick="showLesson('creative-arts')">Digital Art & Creative Expression</a></li>
+                        <li><a href="#" onclick="showLesson('progress-track')">AI-Powered Progress Tracking</a></li>
+                    </ul>
+                </div>
+
+                <!-- Smart Kids (10-12) -->
+                <div class="age-card smart-kids interactive-element" data-age="10-12" data-monthly="1500" data-quarterly="5250" data-savings="1250">
+                    <div class="age-icon">⚡</div>
+                    <h3>Smart Kids</h3>
+                    <div class="age-range">Ages 10-12 | Excellence Level</div>
+                    <div class="pricing-display">
+                        <div class="price-monthly">LKR 1,500/month</div>
+                        <div class="price-quarterly">LKR 5,250/quarterly</div>
+                        <div class="savings">Save LKR 1,250 (24%)</div>
+                    </div>
+                    <ul class="features-list">
+                        <li><a href="#" onclick="showLesson('advanced-math-2')">Higher Mathematics & Statistics</a></li>
+                        <li><a href="#" onclick="showLesson('coding-intro')">Professional Coding Introduction</a></li>
+                        <li><a href="#" onclick="showLesson('stem-projects')">Real-World STEM Projects</a></li>
+                        <li><a href="#" onclick="showLesson('logical-mastery')">Advanced Logical Thinking</a></li>
+                        <li><a href="#" onclick="showLesson('algorithmic-basics')">Algorithmic Thinking Foundations</a></li>
+                        <li><a href="#" onclick="showLesson('critical-thinking')">Critical Problem-Solving Skills</a></li>
+                    </ul>
+                </div>
+
+                <!-- Tech Teens (13-15) -->
+                <div class="age-card tech-teens interactive-element" data-age="13-15" data-monthly="2000" data-quarterly="7000" data-savings="1500">
+                    <div class="age-icon">💻</div>
+                    <h3>Tech Teens</h3>
+                    <div class="age-range">Ages 13-15 | Professional Level</div>
+                    <div class="pricing-display">
+                        <div class="price-monthly">LKR 2,000/month</div>
+                        <div class="price-quarterly">LKR 7,000/quarterly</div>
+                        <div class="savings">Save LKR 1,500 (21%)</div>
+                    </div>
+                    <ul class="features-list">
+                        <li><a href="#" onclick="showLesson('programming-pro')">Professional Programming Languages</a></li>
+                        <li><a href="#" onclick="showLesson('web-dev')">Full-Stack Web Development</a></li>
+                        <li><a href="#" onclick="showLesson('digital-literacy')">Advanced Digital Literacy</a></li>
+                        <li><a href="#" onclick="showLesson('algorithmic-advanced')">Complex Algorithmic Thinking</a></li>
+                        <li><a href="#" onclick="showLesson('tech-projects')">Industry-Level Tech Projects</a></li>
+                        <li><a href="#" onclick="showLesson('career-prep')">Tech Career Preparation</a></li>
+                    </ul>
+                </div>
+
+                <!-- Future Leaders (16-18) -->
+                <div class="age-card future-leaders interactive-element" data-age="16-18" data-monthly="2500" data-quarterly="8750" data-savings="2250">
+                    <div class="age-icon">🎯</div>
+                    <h3>Future Leaders</h3>
+                    <div class="age-range">Ages 16-18 | Leadership Level</div>
+                    <div class="pricing-display">
+                        <div class="price-monthly">LKR 2,500/month</div>
+                        <div class="price-quarterly">LKR 8,750/quarterly</div>
+                        <div class="savings">Save LKR 2,250 (26%)</div>
+                    </div>
+                    <ul class="features-list">
+                        <li><a href="#" onclick="showLesson('ai-ml')">AI & Machine Learning Mastery</a></li>
+                        <li><a href="#" onclick="showLesson('mobile-dev')">Professional Mobile App Development</a></li>
+                        <li><a href="#" onclick="showLesson('advanced-programming')">Enterprise-Level Programming</a></li>
+                        <li><a href="#" onclick="showLesson('complex-algorithms')">Advanced Data Structures & Algorithms</a></li>
+                        <li><a href="#" onclick="showLesson('leadership')">Leadership & Entrepreneurship</a></li>
+                        <li><a href="#" onclick="showLesson('career-mentorship')">1-on-1 Career Mentorship</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div style="text-align: center;">
+                <a href="#pricing" class="btn btn-primary" style="font-size: 1.25rem; padding: 1rem 2rem;">
+                    <span>Enroll in Excellence Program</span>
+                    <span>🚀</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Advanced Features Section -->
+    <section id="features" class="features-section">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-badge">World-Class Features</div>
+                <h2 class="section-title">
+                    Why <span class="gradient-text">TecaiKids Excellence</span> Leads
+                </h2>
+                <p class="section-description">
+                    Our platform combines cutting-edge technology with proven educational methodologies, 
+                    delivering unmatched learning outcomes for Sri Lankan students.
+                </p>
+            </div>
+
+            <div class="features-grid">
+                <div class="feature-card">
+                    <span class="feature-icon">🧠</span>
+                    <h3>AI-Powered Personalization</h3>
+                    <p>Advanced machine learning algorithms adapt content delivery to each student's learning style, pace, and preferences for optimal outcomes.</p>
+                    <ul class="feature-list">
+                        <li>Intelligent content recommendation</li>
+                        <li>Adaptive difficulty progression</li>
+                        <li>Personalized learning paths</li>
+                        <li>Real-time performance analytics</li>
+                    </ul>
+                </div>
+
+                <div class="feature-card">
+                    <span class="feature-icon">🎯</span>
+                    <h3>Expert-Designed Curriculum</h3>
+                    <p>Curriculum developed by NIE-trained educators and international experts, aligned with global standards while maintaining Sri Lankan context.</p>
+                    <ul class="feature-list">
+                        <li>NIE-validated content</li>
+                        <li>International standard alignment</li>
+                        <li>Cultural context integration</li>
+                        <li>Regular expert reviews</li>
+                    </ul>
+                </div>
+
+                <div class="feature-card">
+                    <span class="feature-icon">🌍</span>
+                    <h3>Global Competency Focus</h3>
+                    <p>Preparing students for international opportunities while strengthening their Sri Lankan identity and values.</p>
+                    <ul class="feature-list">
+                        <li>International certification prep</li>
+                        <li>Global career readiness</li>
+                        <li>Cross-cultural competency</li>
+                        <li>Local heritage appreciation</li>
+                    </ul>
+                </div>
+
+                <div class="feature-card">
+                    <span class="feature-icon">💎</span>
+                    <h3>Premium Learning Experience</h3>
+                    <p>High-quality interactive content, virtual laboratories, and immersive learning experiences that engage and inspire.</p>
+                    <ul class="feature-list">
+                        <li>Interactive 3D simulations</li>
+                        <li>Virtual reality experiences</li>
+                        <li>Gamified assessments</li>
+                        <li>Multimedia rich content</li>
+                    </ul>
+                </div>
+
+                <div class="feature-card">
+                    <span class="feature-icon">📊</span>
+                    <h3>Advanced Analytics & Reporting</h3>
+                    <p>Comprehensive progress tracking and detailed analytics provide insights for students, parents, and educators.</p>
+                    <ul class="feature-list">
+                        <li>Real-time progress dashboards</li>
+                        <li>Detailed performance reports</li>
+                        <li>Parent engagement tools</li>
+                        <li>Predictive learning analytics</li>
+                    </ul>
+                </div>
+
+                <div class="feature-card">
+                    <span class="feature-icon">🤝</span>
+                    <h3>Community & Mentorship</h3>
+                    <p>Connect with peers, mentors, and industry professionals through our exclusive learning community platform.</p>
+                    <ul class="feature-list">
+                        <li>Peer learning networks</li>
+                        <li>Expert mentor matching</li>
+                        <li>Industry professional connections</li>
+                        <li>Collaborative projects</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Advanced Payment Section -->
+    <section id="pricing" class="payment-section">
+        <div class="container payment-container">
+            <div class="section-header">
+                <div class="section-badge">Secure Enrollment</div>
+                <h2 class="section-title">
+                    Invest in Your Child's <span class="gradient-text">Future Excellence</span>
+                </h2>
+                <p class="section-description">
+                    Professional-grade education with flexible payment options. Start your child's journey to excellence today.
+                </p>
+            </div>
+
+            <!-- Step 1: Age Selection -->
+            <div class="payment-step">
+                <div class="step-header">
+                    <div class="step-number">1</div>
+                    <h3 class="step-title">Select Your Child's Age Group</h3>
+                </div>
+                <div class="age-selection-grid">
+                    <div class="age-selector-btn" data-age="4-6" data-monthly="800" data-quarterly="2800" data-savings="600">
+                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">🌟</div>
+                        <div style="font-weight: 700;">Little Learners</div>
+                        <div style="color: var(--neutral-gray); font-size: 0.875rem;">Ages 4-6</div>
+                    </div>
+                    <div class="age-selector-btn" data-age="7-9" data-monthly="1200" data-quarterly="4200" data-savings="900">
+                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">🚀</div>
+                        <div style="font-weight: 700;">Young Explorers</div>
+                        <div style="color: var(--neutral-gray); font-size: 0.875rem;">Ages 7-9</div>
+                    </div>
+                    <div class="age-selector-btn" data-age="10-12" data-monthly="1500" data-quarterly="5250" data-savings="1250">
+                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">⚡</div>
+                        <div style="font-weight: 700;">Smart Kids</div>
+                        <div style="color: var(--neutral-gray); font-size: 0.875rem;">Ages 10-12</div>
+                    </div>
+                    <div class="age-selector-btn" data-age="13-15" data-monthly="2000" data-quarterly="7000" data-savings="1500">
+                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">💻</div>
+                        <div style="font-weight: 700;">Tech Teens</div>
+                        <div style="color: var(--neutral-gray); font-size: 0.875rem;">Ages 13-15</div>
+                    </div>
+                    <div class="age-selector-btn" data-age="16-18" data-monthly="2500" data-quarterly="8750" data-savings="2250">
+                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">🎯</div>
+                        <div style="font-weight: 700;">Future Leaders</div>
+                        <div style="color: var(--neutral-gray); font-size: 0.875rem;">Ages 16-18</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 2: Billing Selection -->
+            <div class="payment-step">
+                <div class="step-header">
+                    <div class="step-number">2</div>
+                    <h3 class="step-title">Choose Your Billing Cycle</h3>
+                </div>
+                <div class="billing-toggle">
+                    <label class="billing-option">
+                        <input type="radio" name="billing" value="monthly" checked>
+                        <div>
+                            <div style="font-weight: 700; margin-bottom: 0.25rem;">Monthly Billing</div>
+                            <div style="font-size: 0.875rem; color: var(--neutral-gray);">Pay monthly, cancel anytime</div>
+                        </div>
+                    </label>
+                    <label class="billing-option">
+                        <input type="radio" name="billing" value="quarterly">
+                        <div>
+                            <div style="font-weight: 700; margin-bottom: 0.25rem;">Quarterly Billing</div>
+                            <div style="font-size: 0.875rem; color: var(--neutral-gray);">Includes physical workbooks</div>
+                        </div>
+                        <div class="save-badge">Save 25%</div>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Price Summary -->
+            <div class="price-summary" id="price-summary" style="display: none;">
+                <div class="summary-title" id="summary-title">Select an age group to see pricing</div>
+                <div class="summary-price" id="summary-price">LKR 0</div>
+                <div class="summary-savings" id="summary-savings" style="display: none;"></div>
+            </div>
+
+            <!-- Step 3: Payment Method -->
+            <div class="payment-step">
+                <div class="step-header">
+                    <div class="step-number">3</div>
+                    <h3 class="step-title">Select Payment Method</h3>
+                </div>
+                <div class="payment-methods">
+                    <div class="payment-method active" data-method="stripe">
+                        <div class="method-header">
+                            <div class="method-info">
+                                <span class="method-icon">💳</span>
+                                <div class="method-details">
+                                    <h4>Credit/Debit Card</h4>
+                                    <p>Secure payment via international gateway</p>
+                                </div>
+                            </div>
+                            <div class="method-status available">✓ Available</div>
+                        </div>
+                    </div>
+
+                    <div class="payment-method" data-method="bank">
+                        <div class="method-header">
+                            <div class="method-info">
+                                <span class="method-icon">🏦</span>
+                                <div class="method-details">
+                                    <h4>Bank Transfer</h4>
+                                    <p>Direct transfer to Bank of Ceylon</p>
+                                </div>
+                            </div>
+                            <div class="method-status available">✓ Available</div>
+                        </div>
+                    </div>
+
+                    <div class="payment-method" data-method="ezcash">
+                        <div class="method-header">
+                            <div class="method-info">
+                                <span class="method-icon">📱</span>
+                                <div class="method-details">
+                                    <h4>eZ Cash</h4>
+                                    <p>Mobile payment via eZ Cash</p>
+                                </div>
+                            </div>
+                            <div class="method-status coming-soon">Coming Soon</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Customer Information -->
+            <div class="form-section">
+                <h3 style="margin-bottom: 2rem; color: #1f2937;">Student & Parent Information</h3>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Student's Full Name *</label>
+                        <input type="text" id="student-name" required placeholder="Enter student's full name">
+                    </div>
+                    <div class="form-group">
+                        <label>Parent/Guardian Name *</label>
+                        <input type="text" id="parent-name" required placeholder="Enter parent's full name">
+                    </div>
+                    <div class="form-group">
+                        <label>Email Address *</label>
+                        <input type="email" id="customer-email" required placeholder="parent@example.com">
+                    </div>
+                    <div class="form-group">
+                        <label>Phone Number *</label>
+                        <input type="tel" id="customer-phone" required placeholder="+94 77 123 4567">
+                    </div>
+                </div>
+                <div class="form-group" id="address-section" style="display: none;">
+                    <label>Delivery Address for Quarterly Workbooks *</label>
+                    <textarea id="delivery-address" rows="3" placeholder="Enter complete delivery address including postal code..."></textarea>
+                </div>
+            </div>
+
+            <!-- Payment Action -->
+            <button class="payment-button" id="payment-btn" disabled>
+                <span id="payment-btn-text">Select Age Group to Continue</span>
+                <span id="payment-amount"></span>
+            </button>
+            <div class="security-notice">
+                🔒 256-bit SSL encryption • Secure payment processing • Money-back guarantee
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact-section">
+        <div class="container contact-container">
+            <div class="section-header">
+                <div class="section-badge">Get In Touch</div>
+                <h2 class="section-title">
+                    Ready to Start Your Child's <span class="gradient-text">Excellence Journey</span>?
+                </h2>
+                <p class="section-description">
+                    Our education consultants are ready to help you choose the perfect learning path for your child.
+                </p>
+            </div>
+
+            <div class="contact-form">
+                <form id="contact-form">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Your Name *</label>
+                            <input type="text" name="name" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Email Address *</label>
+                            <input type="email" name="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Phone Number</label>
+                            <input type="tel" name="phone" placeholder="+94 77 123 4567">
+                        </div>
+                        <div class="form-group">
+                            <label>Child's Age Group</label>
+                            <select name="child_age">
+                                <option value="">Select Age Group</option>
+                                <option value="4-6">Little Learners (4-6)</option>
+                                <option value="7-9">Young Explorers (7-9)</option>
+                                <option value="10-12">Smart Kids (10-12)</option>
+                                <option value="13-15">Tech Teens (13-15)</option>
+                                <option value="16-18">Future Leaders (16-18)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>How can we help you? *</label>
+                        <textarea name="message" required rows="4" placeholder="Tell us about your child's learning goals and any questions you have..."></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%; padding: 1rem;">
+                        Send Message & Schedule Consultation
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Advanced Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>TecaiKids Excellence</h3>
+                    <p>Empowering Sri Lankan children with world-class education and future-ready skills since 2024.</p>
+                    <p><strong>TEC Sri Lanka Worldwide Initiative</strong></p>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>Learning Programs</h3>
+                    <ul>
+                        <li><a href="#programs">Little Learners (4-6)</a></li>
+                        <li><a href="#programs">Young Explorers (7-9)</a></li>
+                        <li><a href="#programs">Smart Kids (10-12)</a></li>
+                        <li><a href="#programs">Tech Teens (13-15)</a></li>
+                        <li><a href="#programs">Future Leaders (16-18)</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>Contact Information</h3>
+                    <ul>
+                        <li>📧 hello@tecaikids.com</li>
+                        <li>📞 +94 11 234 5678</li>
+                        <li>🏢 TEC Sri Lanka Worldwide (Pvt.) Ltd</li>
+                        <li>📍 Colombo, Sri Lanka</li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>Excellence Guarantee</h3>
+                    <ul>
+                        <li>✓ Expert-designed curriculum</li>
+                        <li>✓ 24/7 learning support</li>
+                        <li>✓ Progress guarantee</li>
+                        <li>✓ Parent satisfaction</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>© 2024 TecaiKids Platform by TEC Sri Lanka Worldwide (Pvt.) Ltd. All rights reserved.</p>
+                <p>Designed for Sri Lankan Excellence • Logical Thinking • Algorithmic Mastery • Future Leadership</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Lesson Modal -->
+    <div class="modal-overlay" id="lesson-modal">
+        <div class="modal-content">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                <h3 id="lesson-title">Lesson Title</h3>
+                <button onclick="closeLessonModal()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer;">✕</button>
+            </div>
+            <div id="lesson-content">
+                <!-- Dynamic lesson content will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Advanced JavaScript -->
+    <script>
+        // Global State Management
+        const appState = {
+            selectedAge: null,
+            selectedBilling: 'monthly',
+            selectedPaymentMethod: 'stripe',
+            currentPricing: null,
+            currentAgeLevel: null
+        };
+
+        // Age Level Configuration
+        const ageLevels = {
+            '4-6': {
+                name: 'Little Learners',
+                fullName: 'Little Learners Foundation Program',
+                description: 'Comprehensive foundation learning for ages 4-6'
+            },
+            '7-9': {
+                name: 'Young Explorers',
+                fullName: 'Young Explorers Discovery Program',
+                description: 'Advanced discovery learning for ages 7-9'
+            },
+            '10-12': {
+                name: 'Smart Kids',
+                fullName: 'Smart Kids Excellence Program',
+                description: 'Excellence-focused learning for ages 10-12'
+            },
+            '13-15': {
+                name: 'Tech Teens',
+                fullName: 'Tech Teens Professional Program',
+                description: 'Professional-level technology education for ages 13-15'
+            },
+            '16-18': {
+                name: 'Future Leaders',
+                fullName: 'Future Leaders Mastery Program',
+                description: 'Leadership and mastery program for ages 16-18'
+            }
+        };
+
+        // Lesson Content Database
+        const lessonContent = {
+            'numbers-letters': {
+                title: '🔤 Interactive Number & Letter Recognition',
+                content: `
+                    <div class="lesson-content">
+                        <h4>🎯 Learning Objectives</h4>
+                        <ul>
+                            <li>Master number recognition 1-20</li>
+                            <li>Identify all uppercase and lowercase letters</li>
+                            <li>Connect letters with phonetic sounds</li>
+                            <li>Develop fine motor skills through tracing</li>
+                        </ul>
+
+                        <h4>🎮 Interactive Activity: Number Counting</h4>
+                        <div style="background: #f0f9ff; padding: 2rem; border-radius: 12px; margin: 1rem 0;">
+                            <p><strong>Count the fruits and select the correct number:</strong></p>
+                            <div style="font-size: 3rem; text-align: center; margin: 1rem 0;">
+                                🍎🍎🍎🍎🍎
+                            </div>
+                            <div style="display: flex; gap: 1rem; justify-content: center;">
+                                <button class="btn btn-outline" onclick="checkAnswer(4, this)">4</button>
+                                <button class="btn btn-outline" onclick="checkAnswer(5, this)">5</button>
+                                <button class="btn btn-outline" onclick="checkAnswer(6, this)">6</button>
+                            </div>
+                        </div>
+
+                        <h4>📝 Home Practice Activities</h4>
+                        <ul>
+                            <li>Practice writing numbers 1-10 daily</li>
+                            <li>Find and name letters on street signs</li>
+                            <li>Count everyday objects around the house</li>
+                            <li>Play "I Spy" with letters and numbers</li>
+                        </ul>
+
+                        <h4>🏆 Progress Milestones</h4>
+                        <ul>
+                            <li>Week 1: Recognize numbers 1-10</li>
+                            <li>Week 2: Write numbers 1-10</li>
+                            <li>Week 3: Identify 15+ letters</li>
+                            <li>Week 4: Match letters to sounds</li>
+                        </ul>
+                    </div>
+                `
+            },
+            'advanced-math': {
+                title: '🧮 Advanced Mathematics & Problem Solving',
+                content: `
+                    <div class="lesson-content">
+                        <h4>🎯 Learning Objectives</h4>
+                        <ul>
+                            <li>Master multiplication tables 1-12</li>
+                            <li>Solve complex word problems</li>
+                            <li>Understand fractions and decimals</li>
+                            <li>Apply mathematical reasoning</li>
+                        </ul>
+
+                        <h4>🎮 Interactive Challenge: Math Problem Solving</h4>
+                        <div style="background: #f0f9ff; padding: 2rem; border-radius: 12px; margin: 1rem 0;">
+                            <p><strong>Sarah has 24 stickers. She gives 8 to her friend and buys 15 more. How many stickers does she have now?</strong></p>
+                            <div style="margin: 1rem 0;">
+                                <input type="number" id="math-answer" placeholder="Enter your answer" style="padding: 0.5rem; border: 2px solid #ddd; border-radius: 8px; margin-right: 1rem;">
+                                <button class="btn btn-primary" onclick="checkMathAnswer(31)">Submit Answer</button>
+                            </div>
+                            <div id="math-feedback" style="margin-top: 1rem;"></div>
+                        </div>
+
+                        <h4>📊 Real-World Applications</h4>
+                        <ul>
+                            <li>Calculate shopping costs and change</li>
+                            <li>Measure ingredients for cooking</li>
+                            <li>Plan time schedules and budgets</li>
+                            <li>Analyze data and create charts</li>
+                        </ul>
+                    </div>
+                `
+            },
+            'coding-intro': {
+                title: '💻 Professional Coding Introduction',
+                content: `
+                    <div class="lesson-content">
+                        <h4>🎯 Learning Objectives</h4>
+                        <ul>
+                            <li>Understand programming logic and syntax</li>
+                            <li>Write basic programs in Python</li>
+                            <li>Debug and test code effectively</li>
+                            <li>Apply coding to solve real problems</li>
+                        </ul>
+
+                        <h4>🎮 Interactive Coding Challenge</h4>
+                        <div style="background: #f8fafc; padding: 2rem; border-radius: 12px; margin: 1rem 0; border: 1px solid #e2e8f0;">
+                            <p><strong>Write a program to calculate the area of a rectangle:</strong></p>
+                            <textarea style="width: 100%; height: 120px; padding: 1rem; border: 2px solid #ddd; border-radius: 8px; font-family: monospace; margin: 1rem 0;" placeholder="# Write your Python code here
+length = 10
+width = 5
+area = ?"></textarea>
+                            <button class="btn btn-primary" onclick="runCode()">Run Code</button>
+                            <div id="code-output" style="margin-top: 1rem; padding: 1rem; background: #1f2937; color: #10b981; border-radius: 8px; display: none;">
+                                <strong>Output:</strong> <span id="output-text"></span>
+                            </div>
+                        </div>
+
+                        <h4>🚀 Career Applications</h4>
+                        <ul>
+                            <li>Web development and app creation</li>
+                            <li>Data analysis and machine learning</li>
+                            <li>Game development and animation</li>
+                            <li>Robotics and IoT programming</li>
+                        </ul>
+                    </div>
+                `
+            }
+        };
+
+        // Initialize Application
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeEventListeners();
+            initializeAnimations();
+            handleScrollEffects();
+        });
+
+        // Event Listeners Setup
+        function initializeEventListeners() {
+            // Age card selection
+            document.querySelectorAll('.age-card[data-age]').forEach(card => {
+                card.addEventListener('click', () => selectAgeLevel(card));
+            });
+
+            // Age selector buttons
+            document.querySelectorAll('.age-selector-btn').forEach(btn => {
+                btn.addEventListener('click', () => selectAge(btn));
+            });
+
+            // Billing cycle selection
+            document.querySelectorAll('input[name="billing"]').forEach(radio => {
+                radio.addEventListener('change', (e) => {
+                    appState.selectedBilling = e.target.value;
+                    updatePricingDisplay();
+                    updateAddressRequirement();
+                });
+            });
+
+            // Payment method selection
+            document.querySelectorAll('.payment-method').forEach(method => {
+                method.addEventListener('click', () => selectPaymentMethod(method));
+            });
+
+            // Payment button
+            document.getElementById('payment-btn').addEventListener('click', processPayment);
+
+            // Contact form
+            document.getElementById('contact-form').addEventListener('submit', handleContactForm);
+
+            // Smooth scrolling
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const target = document.querySelector(anchor.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
+            });
+        }
+
+        // Age Level Selection
+        function selectAgeLevel(card) {
+            // Remove previous selections
+            document.querySelectorAll('.age-card').forEach(c => c.classList.remove('selected'));
+            
+            // Select current card
+            card.classList.add('selected');
+            
+            // Auto-scroll to pricing section
+            setTimeout(() => {
+                document.getElementById('pricing').scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }, 300);
+
+            // Auto-select in payment section
+            const ageValue = card.dataset.age;
+            const ageBtn = document.querySelector(`.age-selector-btn[data-age="${ageValue}"]`);
+            if (ageBtn) {
+                selectAge(ageBtn);
+            }
+        }
+
+        // Age Selection in Payment Section
+        function selectAge(button) {
+            // Remove previous selections
+            document.querySelectorAll('.age-selector-btn').forEach(btn => btn.classList.remove('selected'));
+            
+            // Select current button
+            button.classList.add('selected');
+            
+            // Update app state
+            appState.selectedAge = button.dataset.age;
+            appState.currentPricing = {
+                monthly: parseInt(button.dataset.monthly),
+                quarterly: parseInt(button.dataset.quarterly),
+                savings: parseInt(button.dataset.savings)
+            };
+            appState.currentAgeLevel = ageLevels[appState.selectedAge];
+            
+            updatePricingDisplay();
+            updatePaymentButton();
+        }
+
+        // Update Pricing Display
+        function updatePricingDisplay() {
+            const summaryDiv = document.getElementById('price-summary');
+            const titleDiv = document.getElementById('summary-title');
+            const priceDiv = document.getElementById('summary-price');
+            const savingsDiv = document.getElementById('summary-savings');
+
+            if (!appState.selectedAge || !appState.currentPricing) {
+                summaryDiv.style.display = 'none';
+                return;
+            }
+
+            summaryDiv.style.display = 'block';
+            
+            const levelInfo = appState.currentAgeLevel;
+            const price = appState.selectedBilling === 'monthly' 
+                ? appState.currentPricing.monthly 
+                : appState.currentPricing.quarterly;
+            
+            titleDiv.textContent = `${levelInfo.fullName} - ${appState.selectedBilling.charAt(0).toUpperCase() + appState.selectedBilling.slice(1)}`;
+            priceDiv.textContent = `LKR ${price.toLocaleString()}`;
+            
+            if (appState.selectedBilling === 'quarterly') {
+                savingsDiv.textContent = `Save LKR ${appState.currentPricing.savings.toLocaleString()}`;
+                savingsDiv.style.display = 'block';
+            } else {
+                savingsDiv.style.display = 'none';
+            }
+        }
+
+        // Update Address Requirement
+        function updateAddressRequirement() {
+            const addressSection = document.getElementById('address-section');
+            if (appState.selectedBilling === 'quarterly') {
+                addressSection.style.display = 'block';
+                document.getElementById('delivery-address').required = true;
+            } else {
+                addressSection.style.display = 'none';
+                document.getElementById('delivery-address').required = false;
+            }
+        }
+
+        // Payment Method Selection
+        function selectPaymentMethod(method) {
+            document.querySelectorAll('.payment-method').forEach(m => m.classList.remove('active'));
+            method.classList.add('active');
+            appState.selectedPaymentMethod = method.dataset.method;
+        }
+
+        // Update Payment Button
+        function updatePaymentButton() {
+            const payBtn = document.getElementById('payment-btn');
+            const payBtnText = document.getElementById('payment-btn-text');
+            const payAmount = document.getElementById('payment-amount');
+            
+            if (appState.selectedAge && appState.currentPricing) {
+                const price = appState.selectedBilling === 'monthly' 
+                    ? appState.currentPricing.monthly 
+                    : appState.currentPricing.quarterly;
+                
+                payBtn.disabled = false;
+                payBtnText.textContent = 'Enroll in Excellence Program';
+                payAmount.textContent = `LKR ${price.toLocaleString()}`;
+            } else {
+                payBtn.disabled = true;
+                payBtnText.textContent = 'Select Age Group to Continue';
+                payAmount.textContent = '';
+            }
+        }
+
+        // Process Payment
+        function processPayment() {
+            if (!validatePaymentForm()) return;
+
+            const studentName = document.getElementById('student-name').value;
+            const parentName = document.getElementById('parent-name').value;
+            const email = document.getElementById('customer-email').value;
+            const phone = document.getElementById('customer-phone').value;
+
+            const price = appState.selectedBilling === 'monthly' 
+                ? appState.currentPricing.monthly 
+                : appState.currentPricing.quarterly;
+
+            const enrollmentData = {
+                student: studentName,
+                parent: parentName,
+                email: email,
+                phone: phone,
+                ageGroup: appState.selectedAge,
+                program: appState.currentAgeLevel.fullName,
+                billing: appState.selectedBilling,
+                amount: price,
+                paymentMethod: appState.selectedPaymentMethod
+            };
+
+            if (appState.selectedPaymentMethod === 'stripe') {
+                handleStripePayment(enrollmentData);
+            } else if (appState.selectedPaymentMethod === 'bank') {
+                handleBankTransfer(enrollmentData);
+            } else {
+                showNotification('This payment method is coming soon. Please use Credit Card or Bank Transfer.', 'warning');
+            }
+        }
+
+        // Validate Payment Form
+        function validatePaymentForm() {
+            const requiredFields = ['student-name', 'parent-name', 'customer-email', 'customer-phone'];
+            let isValid = true;
+
+            requiredFields.forEach(fieldId => {
+                const field = document.getElementById(fieldId);
+                if (!field.value.trim()) {
+                    field.style.borderColor = '#ef4444';
+                    isValid = false;
+                } else {
+                    field.style.borderColor = '#e5e7eb';
+                }
+            });
+
+            if (appState.selectedBilling === 'quarterly') {
+                const addressField = document.getElementById('delivery-address');
+                if (!addressField.value.trim()) {
+                    addressField.style.borderColor = '#ef4444';
+                    isValid = false;
+                } else {
+                    addressField.style.borderColor = '#e5e7eb';
+                }
+            }
+
+            if (!isValid) {
+                showNotification('Please fill in all required fields.', 'error');
+            }
+
+            return isValid;
+        }
+
+        // Handle Stripe Payment
+        function handleStripePayment(data) {
+            showNotification(`Processing ${data.program} enrollment for ${data.student}...`, 'info');
+            
+            // Simulate Stripe integration
+            setTimeout(() => {
+                showNotification(
+                    `🎉 Enrollment Successful!\n\nWelcome to ${data.program}, ${data.student}!\n\nYou will receive login credentials and getting started guide via email within 24 hours.\n\nAmount: LKR ${data.amount.toLocaleString()}`,
+                    'success'
+                );
+                resetPaymentForm();
+            }, 2000);
+        }
+
+        // Handle Bank Transfer
+        function handleBankTransfer(data) {
+            const reference = `TECAI_${Date.now().toString().slice(-8)}_${data.ageGroup.replace('-', '')}`;
+            
+            showNotification(
+                `Bank Transfer Details for ${data.program}:\n\n` +
+                `Bank: Bank of Ceylon\n` +
+                `Account Name: TEC Sri Lanka Worldwide (Pvt.) Ltd\n` +
+                `Amount: LKR ${data.amount.toLocaleString()}\n` +
+                `Reference: ${reference}\n\n` +
+                `Please send deposit slip to hello@tecaikids.com\n` +
+                `Enrollment will be activated within 24 hours.`,
+                'info'
+            );
+        }
+
+        // Reset Payment Form
+        function resetPaymentForm() {
+            document.getElementById('student-name').value = '';
+            document.getElementById('parent-name').value = '';
+            document.getElementById('customer-email').value = '';
+            document.getElementById('customer-phone').value = '';
+            document.getElementById('delivery-address').value = '';
+        }
+
+        // Show Lesson Modal
+        function showLesson(lessonId) {
+            const modal = document.getElementById('lesson-modal');
+            const titleEl = document.getElementById('lesson-title');
+            const contentEl = document.getElementById('lesson-content');
+            
+            const lesson = lessonContent[lessonId];
+            if (lesson) {
+                titleEl.textContent = lesson.title;
+                contentEl.innerHTML = lesson.content;
+                modal.classList.add('active');
+            }
+        }
+
+        // Close Lesson Modal
+        function closeLessonModal() {
+            document.getElementById('lesson-modal').classList.remove('active');
+        }
+
+        // Interactive Lesson Functions
+        function checkAnswer(correct, button) {
+            const allButtons = button.parentElement.querySelectorAll('button');
+            const userAnswer = parseInt(button.textContent);
+            
+            allButtons.forEach(btn => {
+                btn.disabled = true;
+                if (parseInt(btn.textContent) === correct) {
+                    btn.style.backgroundColor = '#10b981';
+                    btn.style.color = 'white';
+                } else {
+                    btn.style.backgroundColor = '#ef4444';
+                    btn.style.color = 'white';
+                }
+            });
+            
+            if (userAnswer === correct) {
+                showNotification('🎉 Excellent! You counted perfectly!', 'success');
+            } else {
+                showNotification('Good try! The correct answer is ' + correct, 'info');
+            }
+        }
+
+        function checkMathAnswer(correct) {
+            const input = document.getElementById('math-answer');
+            const feedback = document.getElementById('math-feedback');
+            const userAnswer = parseInt(input.value);
+            
+            if (userAnswer === correct) {
+                feedback.innerHTML = '<div class="success">🎉 Perfect! Your mathematical reasoning is excellent!</div>';
+            } else {
+                feedback.innerHTML = '<div class="error">Good attempt! Let\'s work through this step by step: 24 - 8 + 15 = ' + correct + '</div>';
+            }
+        }
+
+        function runCode() {
+            const output = document.getElementById('code-output');
+            const outputText = document.getElementById('output-text');
+            
+            output.style.display = 'block';
+            outputText.textContent = 'Area = 50 square units';
+            showNotification('🎉 Code executed successfully! You\'re becoming a programmer!', 'success');
+        }
+
+        // Contact Form Handler
+        function handleContactForm(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const name = formData.get('name');
+            const email = formData.get('email');
+            const childAge = formData.get('child_age');
+            const message = formData.get('message');
+            
+            if (name && email && message) {
+                showNotification(
+                    `Thank you ${name}! Your consultation request has been received.\n\n` +
+                    `Our education experts will contact you within 24 hours to discuss the perfect learning path for your child.\n\n` +
+                    `Email: ${email}\n` +
+                    `Child's Age Group: ${childAge || 'To be discussed'}`,
+                    'success'
+                );
+                e.target.reset();
+            }
+        }
+
+        // Notification System
+        function showNotification(message, type = 'info') {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 100px;
+                right: 20px;
+                background: ${type === 'success' ? '#10b981' : type === 'error' ? '#ef4444' : type === 'warning' ? '#f59e0b' : '#3b82f6'};
+                color: white;
+                padding: 1rem 1.5rem;
+                border-radius: 12px;
+                box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+                z-index: 3000;
+                max-width: 400px;
+                white-space: pre-line;
+                font-weight: 600;
+                animation: slideIn 0.3s ease-out;
+            `;
+            
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            // Auto-remove after 5 seconds
+            setTimeout(() => {
+                notification.style.animation = 'slideOut 0.3s ease-in';
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.parentNode.removeChild(notification);
+                    }
+                }, 300);
+            }, 5000);
+        }
+
+        // Animation Setup
+        function initializeAnimations() {
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('fade-in');
+                    }
+                });
+            }, observerOptions);
+
+            // Observe elements for animation
+            document.querySelectorAll('.age-card, .feature-card, .payment-step').forEach(el => {
+                observer.observe(el);
+            });
+        }
+
+        // Scroll Effects
+        function handleScrollEffects() {
+            window.addEventListener('scroll', () => {
+                const header = document.getElementById('header');
+                if (window.scrollY > 100) {
+                    header.style.background = 'rgba(255, 255, 255, 0.98)';
+                    header.style.borderBottom = '1px solid rgba(0, 0, 0, 0.1)';
+                } else {
+                    header.style.background = 'rgba(255, 255, 255, 0.95)';
+                    header.style.borderBottom = '1px solid rgba(255, 255, 255, 0.2)';
+                }
+            });
+        }
+
+        // Add CSS animations
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideIn {
+                from {
+                    transform: translateX(100%);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+            }
+            
+            @keyframes slideOut {
+                from {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+                to {
+                    transform: translateX(100%);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
