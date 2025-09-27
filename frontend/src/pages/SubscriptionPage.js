@@ -191,6 +191,69 @@ const SubscriptionPage = () => {
               </div>
             </div>
 
+            {/* Parent Testimonials */}
+            <div className="mb-12">
+              <h2 className="text-3xl font-bold text-center text-gray-800 mb-8">What Parents Are Saying</h2>
+              <div className="grid md:grid-cols-3 gap-8">
+                <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
+                  <div className="text-center mb-4">
+                    <div className="text-4xl mb-2">👩‍💼</div>
+                    <h4 className="font-bold text-gray-800">Dr. Kamani Wijeratne</h4>
+                    <p className="text-sm text-gray-500">Parent, Colombo</p>
+                  </div>
+                  <p className="text-gray-700 italic">"My 10-year-old daughter loves the AI courses! She's now explaining machine learning concepts to us at dinner. TEC's approach makes complex topics so accessible."</p>
+                  <div className="text-yellow-500 text-center mt-4">⭐⭐⭐⭐⭐</div>
+                </div>
+                
+                <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
+                  <div className="text-center mb-4">
+                    <div className="text-4xl mb-2">👨‍💻</div>
+                    <h4 className="font-bold text-gray-800">Eng. Roshan Fernando</h4>
+                    <p className="text-sm text-gray-500">Parent, Kandy</p>
+                  </div>
+                  <p className="text-gray-700 italic">"As a tech professional, I'm amazed by the curriculum quality. My son is already thinking like a future innovator. Best investment for his future!"</p>
+                  <div className="text-yellow-500 text-center mt-4">⭐⭐⭐⭐⭐</div>
+                </div>
+                
+                <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
+                  <div className="text-center mb-4">
+                    <div className="text-4xl mb-2">👩‍🏫</div>
+                    <h4 className="font-bold text-gray-800">Mrs. Sanduni Perera</h4>
+                    <p className="text-sm text-gray-500">Parent & Educator, Galle</p>
+                  </div>
+                  <p className="text-gray-700 italic">"The physical materials complement digital learning perfectly. My twins are building robots while learning programming. TEC understands how children learn best."</p>
+                  <div className="text-yellow-500 text-center mt-4">⭐⭐⭐⭐⭐</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Success Stats */}
+            <div className="mb-12 bg-gradient-to-r from-green-100 to-emerald-100 rounded-2xl p-8 border border-green-200">
+              <h2 className="text-3xl font-bold text-center text-gray-800 mb-8">Our Impact on Young Minds</h2>
+              <div className="grid md:grid-cols-4 gap-8 text-center">
+                <div>
+                  <div className="text-4xl mb-2">🎓</div>
+                  <div className="text-3xl font-bold text-green-700">50,000+</div>
+                  <p className="text-green-600 font-medium">Students Educated</p>
+                </div>
+                <div>
+                  <div className="text-4xl mb-2">🏆</div>
+                  <div className="text-3xl font-bold text-green-700">95%</div>
+                  <p className="text-green-600 font-medium">Parent Satisfaction</p>
+                </div>
+                <div>
+                  <div className="text-4xl mb-2">🌟</div>
+                  <div className="text-3xl font-bold text-green-700">200+</div>
+                  <p className="text-green-600 font-medium">International Awards</p>
+                </div>
+                <div>
+                  <div className="text-4xl mb-2">🚀</div>
+                  <div className="text-3xl font-bold text-green-700">42</div>
+                  <p className="text-green-600 font-medium">Years of Innovation</p>
+                </div>
+              </div>
+            </div>
+
             {/* Company Trust Section */}
             <div className="bg-gradient-to-r from-indigo-100 to-purple-100 rounded-2xl p-8 text-center border border-indigo-200">
               <div className="text-4xl mb-4">🏢</div>
@@ -200,17 +263,17 @@ const SubscriptionPage = () => {
                 All payments are processed securely under our registered company name.
               </p>
               <div className="grid md:grid-cols-3 gap-6 text-sm">
-                <div className="bg-white/60 p-4 rounded-lg">
+                <div className="bg-white/60 p-4 rounded-lg hover:bg-white/80 transition-colors">
                   <div className="text-xl mb-2">🖥️</div>
                   <h4 className="font-semibold mb-2">1982: Computer Pioneer</h4>
                   <p className="text-gray-600">First to bring computer education to Sri Lankan children</p>
                 </div>
-                <div className="bg-white/60 p-4 rounded-lg">
+                <div className="bg-white/60 p-4 rounded-lg hover:bg-white/80 transition-colors">
                   <div className="text-xl mb-2">🤖</div>
                   <h4 className="font-semibold mb-2">2004: Robotics Leader</h4>
                   <p className="text-gray-600">Introduced robotics with LEGO Dacta Denmark</p>
                 </div>
-                <div className="bg-white/60 p-4 rounded-lg">
+                <div className="bg-white/60 p-4 rounded-lg hover:bg-white/80 transition-colors">
                   <div className="text-xl mb-2">🚀</div>
                   <h4 className="font-semibold mb-2">2024: AI Future-Ready</h4>
                   <p className="text-gray-600">Complete platform for tomorrow's skills</p>
