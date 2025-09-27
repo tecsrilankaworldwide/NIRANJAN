@@ -594,23 +594,23 @@ const Dashboard = () => {
           <div className="bg-gradient-to-r from-purple-500 to-indigo-600 text-white p-6 rounded-xl">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-lg font-semibold mb-2">Skill Areas</h3>
-                <p className="text-3xl font-bold">4</p>
-                <p className="text-sm mt-1 opacity-80">AI • Logic • Creative • Problem Solving</p>
+                <h3 className="text-lg font-semibold mb-2">Learning Streak</h3>
+                <p className="text-3xl font-bold">7 Days</p>
               </div>
-              <span className="text-4xl opacity-20">🧠</span>
+              <span className="text-4xl opacity-20">🔥</span>
             </div>
+            <p className="text-xs opacity-75 mt-2">Keep it up!</p>
           </div>
           
           <div className="bg-gradient-to-r from-orange-500 to-red-600 text-white p-6 rounded-xl">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-lg font-semibold mb-2">Future Ready</h3>
-                <p className="text-3xl font-bold">42</p>
-                <p className="text-sm mt-1 opacity-80">Years of Excellence</p>
+                <h3 className="text-lg font-semibold mb-2">AI Skills</h3>
+                <p className="text-3xl font-bold">75%</p>
               </div>
-              <span className="text-4xl opacity-20">🚀</span>
+              <span className="text-4xl opacity-20">🤖</span>
             </div>
+            <p className="text-xs opacity-75 mt-2">Future-ready!</p>
           </div>
         </div>
 
