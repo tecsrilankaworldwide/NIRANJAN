@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { BookOpen, Trophy, Clock, Star, Play } from 'lucide-react';
+import { PersonalizedRecommendations } from '@/components/PersonalizedRecommendations';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
