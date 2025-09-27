@@ -877,7 +877,8 @@ function App() {
                 <AnalyticsDashboard />
               </ProtectedRoute>
             } />
-            <Route path="/" element={<Navigate to="/dashboard" replace />} />
+            <Route path="/home" element={<Homepage />} />
+            <Route path="/" element={<Homepage />} />
           </Routes>
         </BrowserRouter>
       </div>
