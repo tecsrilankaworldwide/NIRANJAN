@@ -79,6 +79,12 @@ class LoginResponse(BaseModel):
     token_type: str = "bearer"
     user: UserResponse
 
+class CourseCreate(BaseModel):
+    title: str
+    description: str
+    age_groups: List[AgeGroup]
+    difficulty_level: int = Field(ge=1, le=5)  # 1-5 difficulty scale
+
 class Course(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     title: str
