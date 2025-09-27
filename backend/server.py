@@ -586,6 +586,69 @@ async def get_students_analytics(current_user: User = Depends(get_current_teache
     
     return students
 
+# Enrollment Models
+class EnrollmentBase(BaseModel):
+    course_id: str
+    
+class Enrollment(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    student_id: str
+    course_id: str
+    enrolled_at: datetime = Field(default_factory=datetime.utcnow)
+    progress: float = 0.0
+    completed: bool = False
+    last_accessed: Optional[datetime] = None
+
+# Enrollment Routes
+@api_router.post("/enroll", response_model=Enrollment)
+async def enroll_student(enrollment: EnrollmentBase, current_user: User = Depends(get_current_user), request: Request = None):
+    if current_user.role != UserRole.STUDENT:
+        raise HTTPException(status_code=403, detail="Only students can enroll")
+    
+    # Check if already enrolled
+    existing = await db.enrollments.find_one({"student_id": current_user.id, "course_id": enrollment.course_id})
+    if existing:
+        raise HTTPException(status_code=400, detail="Already enrolled in this course")
+    
+    # Check if course exists
+    course = await db.courses.find_one({"id": enrollment.course_id})
+    if not course:
+        raise HTTPException(status_code=404, detail="Course not found")
+    
+    # Create enrollment
+    enrollment_obj = Enrollment(student_id=current_user.id, course_id=enrollment.course_id)
+    await db.enrollments.insert_one(enrollment_obj.dict())
+    
+    # Update course enrollment count
+    await db.courses.update_one(
+        {"id": enrollment.course_id},
+        {"$inc": {"enrollment_count": 1}}
+    )
+    
+    # Log enrollment
+    await log_activity(
+        current_user.id,
+        ActivityType.COURSE_ENROLLMENT,
+        {"course_id": enrollment.course_id, "course_title": course.get("title")},
+        request
+    )
+    
+    return enrollment_obj
+
+@api_router.get("/my-enrollments")
+async def get_my_enrollments(current_user: User = Depends(get_current_user)):
+    if current_user.role != UserRole.STUDENT:
+        raise HTTPException(status_code=403, detail="Only students have enrollments")
+    
+    enrollments = await db.enrollments.find({"student_id": current_user.id}).to_list(100)
+    
+    # Fetch course details for each enrollment
+    for enrollment in enrollments:
+        course = await db.courses.find_one({"id": enrollment["course_id"]})
+        enrollment["course"] = course
+    
+    return enrollments
+
 # Basic health check
 @api_router.get("/")
 async def root():
