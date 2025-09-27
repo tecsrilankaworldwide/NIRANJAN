@@ -95,6 +95,51 @@ class Course(BaseModel):
     is_active: bool = True
     difficulty_level: int = Field(ge=1, le=5)  # 1-5 difficulty scale
 
+class LessonType(str, Enum):
+    TUTORIAL = "tutorial"
+    CODING = "coding"
+    QUIZ = "quiz"
+    CHALLENGE = "challenge"
+
+class Lesson(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    course_id: str
+    title: str
+    description: str
+    content: str  # HTML/Markdown content
+    lesson_type: LessonType
+    order_index: int  # Order within the course
+    coding_template: Optional[str] = None  # For coding lessons
+    expected_output: Optional[str] = None  # For coding validation
+    quiz_questions: Optional[List[dict]] = None  # For quiz lessons
+    points: int = Field(default=10)  # Points awarded for completion
+    estimated_duration: int = Field(default=15)  # Minutes
+    is_active: bool = True
+
+class LessonCreate(BaseModel):
+    title: str
+    description: str
+    content: str
+    lesson_type: LessonType
+    order_index: int
+    coding_template: Optional[str] = None
+    expected_output: Optional[str] = None
+    quiz_questions: Optional[List[dict]] = None
+    points: int = Field(default=10)
+    estimated_duration: int = Field(default=15)
+
+class LessonProgress(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    student_id: str
+    lesson_id: str
+    course_id: str
+    completed: bool = False
+    score: Optional[float] = None  # Quiz score or coding challenge score
+    attempts: int = 0
+    time_spent: int = 0  # Minutes spent
+    completed_at: Optional[datetime] = None
+    last_accessed: datetime = Field(default_factory=datetime.utcnow)
+
 class Progress(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     student_id: str
@@ -103,6 +148,8 @@ class Progress(BaseModel):
     completed_lessons: List[str] = []
     last_accessed: datetime = Field(default_factory=datetime.utcnow)
     certificates_earned: List[str] = []
+    total_points: int = 0
+    current_lesson_id: Optional[str] = None
 
 # Utility Functions
 def hash_password(password: str) -> str:
