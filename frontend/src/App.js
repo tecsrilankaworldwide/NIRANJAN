@@ -12,6 +12,8 @@ import { TeacherDashboard } from '@/components/TeacherDashboard';
 import { AdminDashboard } from '@/components/AdminDashboard';
 import { LandingPage } from '@/components/LandingPage';
 import { Navbar } from '@/components/Navbar';
+import { CourseDetailPage } from '@/components/CourseDetailPage';
+import { LessonPage } from '@/components/LessonPage';
 import { useToast } from '@/hooks/use-toast';
 import { Toaster } from '@/components/ui/toaster';
 
