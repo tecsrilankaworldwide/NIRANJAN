@@ -371,21 +371,48 @@ const TeacherDashboard = () => {
           )}
         </div>
 
+        {/* Teacher Impact Stats */}
+        <div className="mt-12 bg-gradient-to-r from-green-100 to-emerald-100 rounded-2xl p-8 border border-green-200">
+          <h3 className="text-2xl font-bold text-gray-800 mb-6 text-center">Your Teaching Impact 🌟</h3>
+          <div className="grid md:grid-cols-4 gap-6 text-center">
+            <div className="bg-white/60 p-4 rounded-lg">
+              <div className="text-3xl mb-2">👨‍👩‍👧‍👦</div>
+              <h4 className="text-2xl font-bold text-green-700">75</h4>
+              <p className="text-sm text-gray-700">Students Impacted</p>
+            </div>
+            <div className="bg-white/60 p-4 rounded-lg">
+              <div className="text-3xl mb-2">⏰</div>
+              <h4 className="text-2xl font-bold text-green-700">2,500+</h4>
+              <p className="text-sm text-gray-700">Learning Hours Delivered</p>
+            </div>
+            <div className="bg-white/60 p-4 rounded-lg">
+              <div className="text-3xl mb-2">🎯</div>
+              <h4 className="text-2xl font-bold text-green-700">92%</h4>
+              <p className="text-sm text-gray-700">Course Completion Rate</p>
+            </div>
+            <div className="bg-white/60 p-4 rounded-lg">
+              <div className="text-3xl mb-2">🏆</div>
+              <h4 className="text-2xl font-bold text-green-700">4.8⭐</h4>
+              <p className="text-sm text-gray-700">Average Course Rating</p>
+            </div>
+          </div>
+        </div>
+
         {/* Teaching Tips */}
         <div className="mt-12 bg-gradient-to-r from-blue-100 via-purple-100 to-indigo-100 rounded-2xl p-8 border border-blue-200">
           <h3 className="text-2xl font-bold text-gray-800 mb-6 text-center">Future-Ready Teaching Tips 🎓</h3>
           <div className="grid md:grid-cols-3 gap-6">
-            <div className="bg-white/60 p-4 rounded-lg">
+            <div className="bg-white/60 p-4 rounded-lg hover:bg-white/80 transition-colors">
               <div className="text-2xl mb-3">🎯</div>
               <h4 className="font-semibold mb-2">Age-Appropriate Content</h4>
               <p className="text-sm text-gray-700">Design content that matches cognitive development stages for each age group.</p>
             </div>
-            <div className="bg-white/60 p-4 rounded-lg">
+            <div className="bg-white/60 p-4 rounded-lg hover:bg-white/80 transition-colors">
               <div className="text-2xl mb-3">🤖</div>
               <h4 className="font-semibold mb-2">AI Integration</h4>
               <p className="text-sm text-gray-700">Introduce AI concepts through practical examples and hands-on activities.</p>
             </div>
-            <div className="bg-white/60 p-4 rounded-lg">
+            <div className="bg-white/60 p-4 rounded-lg hover:bg-white/80 transition-colors">
               <div className="text-2xl mb-3">🚀</div>
               <h4 className="font-semibold mb-2">Future Skills Focus</h4>
               <p className="text-sm text-gray-700">Emphasize skills like critical thinking, creativity, and adaptability.</p>
