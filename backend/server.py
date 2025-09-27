@@ -271,6 +271,202 @@ async def get_courses(age_group: Optional[AgeGroup] = None):
     courses = await db.courses.find(query).to_list(1000)
     return [Course(**course) for course in courses]
 
+@api_router.get("/courses/{course_id}", response_model=Course)
+async def get_course(course_id: str):
+    course = await db.courses.find_one({"id": course_id})
+    if not course:
+        raise HTTPException(status_code=404, detail="Course not found")
+    return Course(**course)
+
+# Lesson Management Routes
+@api_router.post("/courses/{course_id}/lessons", response_model=Lesson)
+async def create_lesson(course_id: str, lesson_data: LessonCreate, current_user: User = Depends(get_current_user)):
+    if current_user.role not in [UserRole.TEACHER, UserRole.ADMIN]:
+        raise HTTPException(status_code=403, detail="Not authorized to create lessons")
+    
+    # Verify course exists and user owns it
+    course = await db.courses.find_one({"id": course_id})
+    if not course:
+        raise HTTPException(status_code=404, detail="Course not found")
+    
+    if current_user.role == UserRole.TEACHER and course["created_by"] != current_user.id:
+        raise HTTPException(status_code=403, detail="Not authorized to modify this course")
+    
+    lesson = Lesson(
+        **lesson_data.dict(),
+        course_id=course_id
+    )
+    lesson_dict = lesson.dict()
+    await db.lessons.insert_one(lesson_dict)
+    return lesson
+
+@api_router.get("/courses/{course_id}/lessons", response_model=List[Lesson])
+async def get_course_lessons(course_id: str):
+    lessons = await db.lessons.find({"course_id": course_id, "is_active": True}).sort("order_index", 1).to_list(1000)
+    return [Lesson(**lesson) for lesson in lessons]
+
+@api_router.get("/lessons/{lesson_id}", response_model=Lesson)
+async def get_lesson(lesson_id: str):
+    lesson = await db.lessons.find_one({"id": lesson_id})
+    if not lesson:
+        raise HTTPException(status_code=404, detail="Lesson not found")
+    return Lesson(**lesson)
+
+@api_router.put("/lessons/{lesson_id}", response_model=Lesson)
+async def update_lesson(lesson_id: str, lesson_data: LessonCreate, current_user: User = Depends(get_current_user)):
+    if current_user.role not in [UserRole.TEACHER, UserRole.ADMIN]:
+        raise HTTPException(status_code=403, detail="Not authorized to update lessons")
+    
+    lesson = await db.lessons.find_one({"id": lesson_id})
+    if not lesson:
+        raise HTTPException(status_code=404, detail="Lesson not found")
+    
+    # Verify user owns the course
+    if current_user.role == UserRole.TEACHER:
+        course = await db.courses.find_one({"id": lesson["course_id"]})
+        if course and course["created_by"] != current_user.id:
+            raise HTTPException(status_code=403, detail="Not authorized to modify this lesson")
+    
+    await db.lessons.update_one(
+        {"id": lesson_id},
+        {"$set": lesson_data.dict()}
+    )
+    
+    updated_lesson = await db.lessons.find_one({"id": lesson_id})
+    return Lesson(**updated_lesson)
+
+# Lesson Progress Routes
+@api_router.post("/lessons/{lesson_id}/progress", response_model=LessonProgress)
+async def update_lesson_progress(
+    lesson_id: str, 
+    completed: bool = False,
+    score: Optional[float] = None,
+    time_spent: int = 0,
+    current_user: User = Depends(get_current_user)
+):
+    if current_user.role != UserRole.STUDENT:
+        raise HTTPException(status_code=403, detail="Only students can update lesson progress")
+    
+    lesson = await db.lessons.find_one({"id": lesson_id})
+    if not lesson:
+        raise HTTPException(status_code=404, detail="Lesson not found")
+    
+    # Check if progress already exists
+    existing_progress = await db.lesson_progress.find_one({
+        "student_id": current_user.id,
+        "lesson_id": lesson_id
+    })
+    
+    if existing_progress:
+        # Update existing progress
+        update_data = {
+            "last_accessed": datetime.utcnow(),
+            "attempts": existing_progress["attempts"] + 1,
+            "time_spent": existing_progress["time_spent"] + time_spent
+        }
+        
+        if completed:
+            update_data["completed"] = True
+            update_data["completed_at"] = datetime.utcnow()
+        
+        if score is not None:
+            update_data["score"] = score
+        
+        await db.lesson_progress.update_one(
+            {"student_id": current_user.id, "lesson_id": lesson_id},
+            {"$set": update_data}
+        )
+        
+        updated_progress = await db.lesson_progress.find_one({
+            "student_id": current_user.id,
+            "lesson_id": lesson_id
+        })
+        lesson_progress = LessonProgress(**updated_progress)
+    else:
+        # Create new progress
+        lesson_progress = LessonProgress(
+            student_id=current_user.id,
+            lesson_id=lesson_id,
+            course_id=lesson["course_id"],
+            completed=completed,
+            score=score,
+            attempts=1,
+            time_spent=time_spent,
+            completed_at=datetime.utcnow() if completed else None
+        )
+        await db.lesson_progress.insert_one(lesson_progress.dict())
+    
+    # Update overall course progress
+    await update_course_progress(current_user.id, lesson["course_id"])
+    
+    return lesson_progress
+
+@api_router.get("/courses/{course_id}/progress", response_model=List[LessonProgress])
+async def get_course_lesson_progress(course_id: str, current_user: User = Depends(get_current_user)):
+    if current_user.role == UserRole.STUDENT:
+        student_id = current_user.id
+    else:
+        raise HTTPException(status_code=403, detail="Not authorized")
+    
+    progress_records = await db.lesson_progress.find({
+        "student_id": student_id,
+        "course_id": course_id
+    }).to_list(1000)
+    
+    return [LessonProgress(**record) for record in progress_records]
+
+async def update_course_progress(student_id: str, course_id: str):
+    """Helper function to update overall course progress based on lesson completion"""
+    # Get all lessons for the course
+    lessons = await db.lessons.find({"course_id": course_id, "is_active": True}).to_list(1000)
+    total_lessons = len(lessons)
+    
+    if total_lessons == 0:
+        return
+    
+    # Get completed lessons
+    completed_lessons = await db.lesson_progress.find({
+        "student_id": student_id,
+        "course_id": course_id,
+        "completed": True
+    }).to_list(1000)
+    
+    completed_count = len(completed_lessons)
+    progress_percentage = (completed_count / total_lessons) * 100
+    
+    # Calculate total points
+    total_points = sum([lesson["points"] for lesson in lessons if any(
+        cp["lesson_id"] == lesson["id"] for cp in completed_lessons
+    )])
+    
+    # Update or create course progress
+    existing_progress = await db.progress.find_one({
+        "student_id": student_id,
+        "course_id": course_id
+    })
+    
+    if existing_progress:
+        await db.progress.update_one(
+            {"student_id": student_id, "course_id": course_id},
+            {
+                "$set": {
+                    "progress_percentage": progress_percentage,
+                    "completed_lessons": [cp["lesson_id"] for cp in completed_lessons],
+                    "total_points": total_points,
+                    "last_accessed": datetime.utcnow()
+                }
+            }
+        )
+    else:
+        progress = Progress(
+            student_id=student_id,
+            course_id=course_id,
+            progress_percentage=progress_percentage,
+            completed_lessons=[cp["lesson_id"] for cp in completed_lessons],
+            total_points=total_points
+        )
+        await db.progress.insert_one(progress.dict())
+
 # Progress Tracking Routes
 @api_router.post("/progress", response_model=Progress)
 async def update_progress(progress: Progress, current_user: User = Depends(get_current_user)):
