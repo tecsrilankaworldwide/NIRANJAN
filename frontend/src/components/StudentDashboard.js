@@ -131,6 +131,11 @@ export const StudentDashboard = () => {
         </Badge>
       </div>
 
+      {/* AI-Powered Personalized Recommendations */}
+      <div className="mb-8">
+        <PersonalizedRecommendations />
+      </div>
+
       {/* Available Courses */}
       <div className="mb-8">
         <h2 className="text-2xl font-bold text-gray-900 mb-6" data-testid="available-courses-title">
