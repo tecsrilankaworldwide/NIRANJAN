@@ -100,10 +100,11 @@ class Progress(BaseModel):
 
 # Utility Functions
 def hash_password(password: str) -> str:
-    return bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+    salt = "tecai-kids-salt-2024"  # In production, use random salt per user
+    return hashlib.sha256((password + salt).encode()).hexdigest()
 
 def verify_password(password: str, hashed: str) -> bool:
-    return bcrypt.checkpw(password.encode('utf-8'), hashed.encode('utf-8'))
+    return hash_password(password) == hashed
 
 def create_access_token(data: dict):
     to_encode = data.copy()
