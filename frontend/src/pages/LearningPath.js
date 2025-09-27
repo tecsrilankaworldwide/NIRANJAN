@@ -53,10 +53,11 @@ const LearningPath = () => {
   if (error) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="text-6xl mb-4">😔</div>
-          <h2 className="text-2xl font-bold text-gray-800 mb-2">Oops! Something went wrong</h2>
-          <p className="text-gray-600">{error}</p>
+        <div className="text-center py-20">
+          <div className="text-6xl mb-4">🛠️</div>
+          <h2 className="text-2xl font-bold text-gray-800 mb-2">Platform Maintenance</h2>
+          <p className="text-gray-600 mb-4">We're making the platform even better for you!</p>
+          <p className="text-purple-600 text-sm">Please try again in a moment</p>
         </div>
       </div>
     );
