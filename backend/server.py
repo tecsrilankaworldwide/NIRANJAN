@@ -650,9 +650,13 @@ async def get_my_enrollments(current_user: User = Depends(get_current_user)):
     
     enrollments = await db.enrollments.find({"student_id": current_user.id}).to_list(100)
     
-    # Fetch course details for each enrollment
+    # Fetch course details for each enrollment and clean ObjectIds
     for enrollment in enrollments:
+        if "_id" in enrollment:
+            del enrollment["_id"]
         course = await db.courses.find_one({"id": enrollment["course_id"]})
+        if course and "_id" in course:
+            del course["_id"]
         enrollment["course"] = course
     
     return enrollments
