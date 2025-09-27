@@ -7,12 +7,31 @@ const Homepage = () => {
       <div className="bg-gradient-to-r from-purple-600 via-blue-600 to-indigo-600 text-white">
         <div className="container mx-auto px-4 py-16">
           <div className="text-center">
-            <div className="text-6xl mb-6">🚀</div>
-            <h1 className="text-4xl font-bold mb-4">Welcome to TEC Future-Ready Learning</h1>
-            <p className="text-xl text-purple-100 mb-6">
-              Preparing Sri Lankan children for tomorrow's world through AI, Logic, and Creative Problem Solving
+            <div className="flex justify-center space-x-4 text-6xl mb-6">
+              <span className="animate-bounce">🚀</span>
+              <span className="animate-pulse">🧠</span>
+              <span className="animate-bounce delay-75">🌟</span>
+            </div>
+            <h1 className="text-5xl font-bold mb-4 bg-gradient-to-r from-white to-purple-100 bg-clip-text text-transparent">
+              Welcome to TEC Future-Ready Learning
+            </h1>
+            <p className="text-xl text-purple-100 mb-6 max-w-3xl mx-auto">
+              Empowering Sri Lankan children with <strong className="text-yellow-200">AI literacy</strong>, <strong className="text-blue-200">logical thinking</strong>, and <strong className="text-green-200">creative problem-solving</strong> for tomorrow's careers
             </p>
-            <p className="text-lg text-purple-200">42 Years of Educational Excellence • Ages 5-16</p>
+            <div className="flex items-center justify-center space-x-8 text-purple-200">
+              <div className="flex items-center">
+                <span className="text-2xl mr-2">🏆</span>
+                <span className="font-semibold">42 Years Excellence</span>
+              </div>
+              <div className="flex items-center">
+                <span className="text-2xl mr-2">👶</span>
+                <span className="font-semibold">Ages 5-16</span>
+              </div>
+              <div className="flex items-center">
+                <span className="text-2xl mr-2">🌍</span>
+                <span className="font-semibold">Global Standards</span>
+              </div>
+            </div>
           </div>
         </div>
       </div>
