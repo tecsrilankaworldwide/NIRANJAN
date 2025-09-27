@@ -490,6 +490,192 @@ async def update_course_progress(student_id: str, course_id: str):
         )
         await db.progress.insert_one(progress.dict())
 
+# AI Tutoring Routes
+@api_router.post("/ai-tutor", response_model=AITutorResponse)
+async def ai_tutor_chat(request: AITutorRequest, current_user: User = Depends(get_current_user)):
+    if current_user.role != UserRole.STUDENT:
+        raise HTTPException(status_code=403, detail="AI tutoring is available for students only")
+    
+    try:
+        # Get context information if provided
+        context_info = ""
+        
+        if request.lesson_id:
+            lesson = await db.lessons.find_one({"id": request.lesson_id})
+            if lesson:
+                context_info += f"Current lesson: {lesson['title']} - {lesson['description']}\\n"
+                context_info += f"Lesson content: {lesson['content'][:500]}...\\n"
+        
+        if request.course_id:
+            course = await db.courses.find_one({"id": request.course_id})
+            if course:
+                context_info += f"Course: {course['title']} - {course['description']}\\n"
+        
+        # Create age-appropriate system message
+        age_group = current_user.age_group or "9-12"
+        
+        system_message = f"""You are TecAI, a friendly AI tutor for kids aged {age_group}. Your role is to help students learn programming and technology in a fun, encouraging way.
+
+Guidelines:
+- Use simple, age-appropriate language
+- Be encouraging and positive
+- Break down complex concepts into small steps
+- Use analogies and examples kids can relate to
+- Ask questions to check understanding
+- Provide hints rather than direct answers for coding problems
+- Make learning fun with emojis and engaging explanations
+
+Context: {context_info}
+
+Always remember you're talking to a {age_group} year old student."""
+
+        # Initialize chat
+        chat = LlmChat(
+            api_key=os.environ.get('EMERGENT_LLM_KEY'),
+            session_id=f"student_{current_user.id}_{request.context_type}",
+            system_message=system_message
+        ).with_model("gemini", "gemini-2.0-flash")
+        
+        # Prepare user message with context
+        user_message_text = request.message
+        if request.code_context:
+            user_message_text += f"\\n\\nMy code: {request.code_context}"
+        
+        user_message = UserMessage(text=user_message_text)
+        
+        # Get AI response
+        ai_response = await chat.send_message(user_message)
+        
+        # Generate suggestions based on context
+        suggestions = []
+        helpful_resources = []
+        
+        if request.context_type == "code_help":
+            suggestions = [
+                "Try running your code step by step",
+                "Check for typos in your code",
+                "Make sure your indentation is correct",
+                "Test with simple examples first"
+            ]
+        elif request.context_type == "lesson_help":
+            suggestions = [
+                "Review the lesson content again",
+                "Try the examples in the lesson",
+                "Ask me specific questions about concepts",
+                "Practice with similar problems"
+            ]
+        elif request.context_type == "quiz_help":
+            suggestions = [
+                "Read each question carefully",
+                "Think about what you learned in the lesson",
+                "Eliminate answers you know are wrong",
+                "Take your time to think through each option"
+            ]
+        
+        # Save chat message to database
+        chat_message = ChatMessage(
+            student_id=current_user.id,
+            lesson_id=request.lesson_id,
+            course_id=request.course_id,
+            message=request.message,
+            response=ai_response,
+            context_type=request.context_type
+        )
+        await db.chat_messages.insert_one(chat_message.dict())
+        
+        return AITutorResponse(
+            response=ai_response,
+            suggestions=suggestions,
+            helpful_resources=helpful_resources
+        )
+        
+    except Exception as e:
+        logger.error(f"AI tutoring error: {str(e)}")
+        raise HTTPException(status_code=500, detail="AI tutoring service is temporarily unavailable")
+
+@api_router.get("/ai-tutor/history")
+async def get_chat_history(
+    lesson_id: Optional[str] = None,
+    course_id: Optional[str] = None,
+    limit: int = 20,
+    current_user: User = Depends(get_current_user)
+):
+    if current_user.role != UserRole.STUDENT:
+        raise HTTPException(status_code=403, detail="Chat history is available for students only")
+    
+    query = {"student_id": current_user.id}
+    if lesson_id:
+        query["lesson_id"] = lesson_id
+    if course_id:
+        query["course_id"] = course_id
+    
+    messages = await db.chat_messages.find(query).sort("created_at", -1).limit(limit).to_list(limit)
+    return [ChatMessage(**msg) for msg in messages]
+
+@api_router.post("/ai-tutor/personalized-recommendations")
+async def get_personalized_recommendations(current_user: User = Depends(get_current_user)):
+    if current_user.role != UserRole.STUDENT:
+        raise HTTPException(status_code=403, detail="Recommendations are available for students only")
+    
+    try:
+        # Get student's progress data
+        progress_records = await db.progress.find({"student_id": current_user.id}).to_list(1000)
+        lesson_progress = await db.lesson_progress.find({"student_id": current_user.id}).to_list(1000)
+        
+        # Analyze learning patterns
+        total_courses = len(progress_records)
+        completed_lessons = len([lp for lp in lesson_progress if lp.get("completed", False)])
+        avg_score = sum([lp.get("score", 0) for lp in lesson_progress if lp.get("score")]) / max(len(lesson_progress), 1)
+        
+        # Get available courses for student's age group
+        available_courses = await db.courses.find({
+            "age_groups": current_user.age_group,
+            "is_active": True
+        }).to_list(1000)
+        
+        # Create personalized recommendations using AI
+        system_message = f"""You are an AI learning advisor for a {current_user.age_group} year old student named {current_user.first_name}.
+
+Student's Learning Profile:
+- Enrolled in {total_courses} courses
+- Completed {completed_lessons} lessons
+- Average quiz score: {avg_score:.1f}%
+- Learning focus: Programming and technology for kids
+
+Available courses: {[course['title'] for course in available_courses]}
+
+Provide 3-5 personalized learning recommendations that are encouraging and specific to their progress level. Focus on:
+1. Next steps in their learning journey
+2. Areas where they're doing well
+3. Gentle suggestions for improvement
+4. Fun challenges to keep them engaged
+
+Keep recommendations positive, age-appropriate, and motivating."""
+
+        chat = LlmChat(
+            api_key=os.environ.get('EMERGENT_LLM_KEY'),
+            session_id=f"recommendations_{current_user.id}",
+            system_message=system_message
+        ).with_model("gemini", "gemini-2.0-flash")
+        
+        user_message = UserMessage(text="Please provide personalized learning recommendations for me based on my progress.")
+        
+        recommendations = await chat.send_message(user_message)
+        
+        return {
+            "recommendations": recommendations,
+            "learning_stats": {
+                "total_courses": total_courses,
+                "completed_lessons": completed_lessons,
+                "average_score": round(avg_score, 1),
+                "available_courses": len(available_courses)
+            }
+        }
+        
+    except Exception as e:
+        logger.error(f"Recommendations error: {str(e)}")
+        raise HTTPException(status_code=500, detail="Recommendation service is temporarily unavailable")
+
 # Progress Tracking Routes
 @api_router.post("/progress", response_model=Progress)
 async def update_progress(progress: Progress, current_user: User = Depends(get_current_user)):
