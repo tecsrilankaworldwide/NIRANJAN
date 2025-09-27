@@ -152,6 +152,28 @@ class Progress(BaseModel):
     total_points: int = 0
     current_lesson_id: Optional[str] = None
 
+class ChatMessage(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    student_id: str
+    lesson_id: Optional[str] = None
+    course_id: Optional[str] = None
+    message: str
+    response: str
+    context_type: str = "general"  # general, lesson_help, code_help, quiz_help
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+
+class AITutorRequest(BaseModel):
+    message: str
+    context_type: str = "general"
+    lesson_id: Optional[str] = None
+    course_id: Optional[str] = None
+    code_context: Optional[str] = None
+
+class AITutorResponse(BaseModel):
+    response: str
+    suggestions: List[str] = []
+    helpful_resources: List[str] = []
+
 # Utility Functions
 def hash_password(password: str) -> str:
     salt = "tecai-kids-salt-2024"  # In production, use random salt per user
