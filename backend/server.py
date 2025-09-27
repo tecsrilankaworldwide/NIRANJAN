@@ -10,7 +10,7 @@ from pydantic import BaseModel, Field, EmailStr
 from typing import List, Optional
 import uuid
 from datetime import datetime, timedelta
-import bcrypt
+import hashlib
 import jwt
 from enum import Enum
 
