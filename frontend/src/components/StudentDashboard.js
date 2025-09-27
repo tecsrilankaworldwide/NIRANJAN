@@ -14,6 +14,7 @@ const API = `${BACKEND_URL}/api`;
 
 export const StudentDashboard = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [courses, setCourses] = useState([]);
   const [progress, setProgress] = useState([]);
   const [stats, setStats] = useState({});
