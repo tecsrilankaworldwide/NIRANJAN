@@ -193,6 +193,7 @@ export const StudentDashboard = () => {
                       <Button 
                         className="w-full" 
                         variant={isEnrolled ? "default" : "outline"}
+                        onClick={() => navigate(`/courses/${course.id}`)}
                         data-testid={`course-action-${course.id}`}
                       >
                         <Play className="mr-2 h-4 w-4" />
