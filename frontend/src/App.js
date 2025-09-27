@@ -825,6 +825,20 @@ const SubscriptionPage = () => {
   );
 };
 
+// Import Homepage component
+import HomepageComponent from './pages/Homepage';
+
+// Homepage with Navigation and Footer
+const Homepage = () => {
+  return (
+    <div>
+      <Navigation />
+      <HomepageComponent />
+      <Footer />
+    </div>
+  );
+};
+
 // Main App Component
 function App() {
   return (
