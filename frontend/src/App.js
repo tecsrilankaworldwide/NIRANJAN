@@ -211,6 +211,22 @@ function App() {
                   </ProtectedRoute>
                 } 
               />
+              <Route 
+                path="/courses/:courseId" 
+                element={
+                  <ProtectedRoute>
+                    <CourseDetailPage />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/courses/:courseId/lessons/:lessonId" 
+                element={
+                  <ProtectedRoute requiredRole="student">
+                    <LessonPage />
+                  </ProtectedRoute>
+                } 
+              />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </main>
