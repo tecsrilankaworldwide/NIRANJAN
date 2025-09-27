@@ -805,19 +805,15 @@ const LearningPath = () => {
   );
 };
 
-// Simplified Courses page
+// Import Courses component
+import CoursesPageComponent from './pages/CoursesPage';
+
+// Courses page with Navigation
 const CoursesPage = () => {
   return (
     <div>
       <Navigation />
-      <div className="container mx-auto px-4 py-8">
-        <div className="text-center py-20">
-          <div className="text-6xl mb-4">📚</div>
-          <h1 className="text-3xl font-bold mb-4">All Courses</h1>
-          <p className="text-gray-600 mb-8">Future-ready course catalog coming soon!</p>
-          <p className="text-purple-600">Complete learning ecosystem in development.</p>
-        </div>
-      </div>
+      <CoursesPageComponent />
       <Footer />
     </div>
   );
