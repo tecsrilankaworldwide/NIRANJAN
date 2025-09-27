@@ -755,19 +755,15 @@ const Dashboard = () => {
   );
 };
 
-// Simplified Teacher Dashboard for now
+// Import Teacher Dashboard component
+import TeacherDashboardComponent from './pages/TeacherDashboard';
+
+// Teacher Dashboard with Navigation
 const TeacherDashboard = () => {
   return (
     <div>
       <Navigation />
-      <div className="container mx-auto px-4 py-8">
-        <div className="text-center py-20">
-          <div className="text-6xl mb-4">🎬</div>
-          <h1 className="text-3xl font-bold mb-4">Teacher Content Creation</h1>
-          <p className="text-gray-600 mb-8">Advanced course creation tools coming soon!</p>
-          <p className="text-purple-600">Building the future of educational content creation.</p>
-        </div>
-      </div>
+      <TeacherDashboardComponent />
       <Footer />
     </div>
   );
