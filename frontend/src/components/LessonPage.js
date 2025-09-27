@@ -488,6 +488,17 @@ export const LessonPage = () => {
             </Card>
           )}
 
+          {/* AI Tutor Chat */}
+          <div className="h-96">
+            <AITutorChat 
+              lessonId={lessonId}
+              courseId={courseId}
+              contextType={lesson.lesson_type === 'coding' ? 'code_help' : 'lesson_help'}
+              codeContext={lesson.lesson_type === 'coding' ? codeInput : null}
+              placeholder={`Ask me about "${lesson.title}"... 🤖`}
+            />
+          </div>
+
           {/* Navigation */}
           <Card data-testid="lesson-navigation">
             <CardHeader>
