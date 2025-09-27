@@ -203,11 +203,14 @@ async def get_students(current_user: User = Depends(get_current_user)):
 
 # Course Management Routes
 @api_router.post("/courses", response_model=Course)
-async def create_course(course: Course, current_user: User = Depends(get_current_user)):
+async def create_course(course_data: CourseCreate, current_user: User = Depends(get_current_user)):
     if current_user.role not in [UserRole.TEACHER, UserRole.ADMIN]:
         raise HTTPException(status_code=403, detail="Not authorized to create courses")
     
-    course.created_by = current_user.id
+    course = Course(
+        **course_data.dict(),
+        created_by=current_user.id
+    )
     course_dict = course.dict()
     await db.courses.insert_one(course_dict)
     return course
