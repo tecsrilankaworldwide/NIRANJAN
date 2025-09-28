@@ -1335,6 +1335,18 @@ async def get_comprehensive_progress(current_user: User = Depends(get_current_us
 # Stripe Payment Integration
 from stripe_integration import TecStripeIntegration
 
+# Business Integration Models
+class EnrollmentRequest(BaseModel):
+    childName: str
+    parentName: str
+    email: str
+    phone: Optional[str] = None
+    childAge: str
+    selectedProgram: str
+    parentMessage: Optional[str] = None
+    source: str = "nina_landing"
+    timestamp: datetime = Field(default_factory=datetime.utcnow)
+
 # Initialize Stripe integration
 stripe_integration = TecStripeIntegration(db)
 
