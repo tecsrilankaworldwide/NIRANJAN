@@ -414,6 +414,202 @@ const Login = () => {
   );
 };
 
+// Register Component with Enrollment Integration
+const Register = () => {
+  const [formData, setFormData] = useState({
+    email: '',
+    password: '',
+    full_name: '',
+    role: 'student',
+    age_group: '9-12',
+    child_name: '',
+    selected_package: ''
+  });
+  const [message, setMessage] = useState('');
+  const [loading, setLoading] = useState(false);
+  const { register } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    // Pre-fill form if coming from enrollment
+    if (location.state?.fromEnrollment) {
+      const { email, fullName, childName, selectedPackage } = location.state;
+      setFormData({
+        ...formData,
+        email: email || '',
+        full_name: fullName || '',
+        child_name: childName || '',
+        selected_package: selectedPackage || ''
+      });
+      setMessage('Complete your registration to access the TEC learning platform!');
+    }
+  }, [location.state]);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setMessage('');
+
+    try {
+      const result = await register({
+        ...formData,
+        enrollment_source: location.state?.fromEnrollment ? 'nina_landing' : 'direct_registration'
+      });
+      
+      if (result.success) {
+        setMessage('Registration successful! Redirecting to platform...');
+        setTimeout(() => {
+          navigate('/login');
+        }, 2000);
+      } else {
+        setMessage(result.error);
+      }
+    } catch (error) {
+      setMessage('Registration failed. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-green-50 via-blue-50 to-purple-50 flex items-center justify-center p-4">
+      <div className="bg-white rounded-3xl shadow-2xl p-8 w-full max-w-lg border-2 border-green-100">
+        <div className="text-center mb-8">
+          <div className="text-5xl mb-4">🎓</div>
+          <h1 className="text-3xl font-bold text-gray-800 mb-2">Join TEC Platform</h1>
+          <p className="text-green-600 font-semibold text-lg">Complete Your Registration</p>
+          
+          {location.state?.fromEnrollment && (
+            <div className="mt-4 bg-gradient-to-r from-green-100 to-blue-100 p-4 rounded-xl">
+              <p className="text-sm font-bold text-green-800">🎉 Enrollment Received!</p>
+              <p className="text-xs text-gray-600 mt-1">Create your account to start learning</p>
+            </div>
+          )}
+        </div>
+
+        {message && (
+          <div className={`mb-6 p-4 rounded-xl text-center font-medium ${
+            message.includes('successful') || message.includes('Complete') ? 
+            'bg-green-100 text-green-700 border-2 border-green-200' : 
+            'bg-red-100 text-red-700 border-2 border-red-200'
+          }`}>
+            {message}
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Parent/Guardian Name</label>
+            <input
+              type="text"
+              name="full_name"
+              required
+              value={formData.full_name}
+              onChange={handleChange}
+              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              placeholder="Enter your full name"
+            />
+          </div>
+
+          {location.state?.fromEnrollment && formData.child_name && (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Child's Name</label>
+              <input
+                type="text"
+                name="child_name"
+                value={formData.child_name}
+                onChange={handleChange}
+                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                placeholder="Child's name"
+                readOnly
+              />
+            </div>
+          )}
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
+            <input
+              type="email"
+              name="email"
+              required
+              value={formData.email}
+              onChange={handleChange}
+              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              placeholder="your@email.com"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Password</label>
+            <input
+              type="password"
+              name="password"
+              required
+              value={formData.password}
+              onChange={handleChange}
+              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              placeholder="Create a secure password"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Learning Level</label>
+            <select
+              name="age_group"
+              value={formData.age_group}
+              onChange={handleChange}
+              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+            >
+              <option value="5-8">🌱 Foundation (Ages 5-8)</option>
+              <option value="9-12">🧠 Development (Ages 9-12)</option>
+              <option value="13-16">🎯 Mastery (Ages 13-16)</option>
+            </select>
+          </div>
+
+          {location.state?.fromEnrollment && formData.selected_package && (
+            <div className="bg-blue-50 p-4 rounded-xl">
+              <p className="text-sm font-medium text-blue-800 mb-2">Selected Program:</p>
+              <p className="text-blue-600 capitalize">
+                {formData.selected_package.replace('_', ' ').replace('monthly', '(Monthly)')}
+              </p>
+            </div>
+          )}
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full bg-gradient-to-r from-green-600 to-blue-600 text-white py-4 px-6 rounded-xl hover:from-green-700 hover:to-blue-700 transition-colors font-semibold text-lg disabled:opacity-50"
+          >
+            {loading ? '⏳ Creating Account...' : '🚀 Create Account & Start Learning'}
+          </button>
+        </form>
+
+        <div className="text-center mt-6">
+          <p className="text-gray-600">Already have an account?</p>
+          <button
+            onClick={() => navigate('/login')}
+            className="text-green-600 hover:text-green-800 font-semibold"
+          >
+            Sign In Here
+          </button>
+        </div>
+
+        <div className="mt-8 text-center">
+          <div className="bg-gradient-to-r from-purple-100 to-pink-100 p-4 rounded-xl">
+            <p className="text-sm font-bold text-purple-800">🏢 TEC Sri Lanka Worldwide (Pvt.) Ltd</p>
+            <p className="text-xs text-gray-600 mt-1">42 Years of Educational Excellence • Est. 1982</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 // Enhanced Dashboard Component
 const Dashboard = () => {
   const { user, isStudent, isTeacher, hasSubscription, getLearningLevel } = useAuth();
