@@ -1943,6 +1943,12 @@ const Footer = () => {
   );
 };
 
+// Root Route Component
+const RootRoute = () => {
+  const { user } = useAuth();
+  return user ? <Navigate to="/dashboard" /> : <Navigate to="/landing" />;
+};
+
 // Main App Component
 function App() {
   return (
@@ -1950,7 +1956,7 @@ function App() {
       <div className="App min-h-screen bg-gray-50">
         <BrowserRouter>
           <Routes>
-            <Route path="/" element={user ? <Navigate to="/dashboard" /> : <Navigate to="/landing" />} />
+            <Route path="/" element={<RootRoute />} />
             <Route path="/landing" element={<LandingPage />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
