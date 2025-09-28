@@ -1039,6 +1039,299 @@ async def update_workout_progress(student_id: str, workout: dict, score: int, ti
             }
         )
 
+# Achievement System API Routes
+class Achievement(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    student_id: str
+    achievement_type: str
+    unlocked_at: datetime = Field(default_factory=datetime.utcnow)
+    points_earned: int
+
+class UserAchievement(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    user_id: str
+    achievement_id: str
+    earned_at: datetime = Field(default_factory=datetime.utcnow)
+    points: int
+
+@api_router.get("/achievements")
+async def get_all_achievements():
+    """Get all available achievements"""
+    achievements = await db.achievements.find({"is_active": True}).to_list(100)
+    for achievement in achievements:
+        if "_id" in achievement:
+            del achievement["_id"]
+    return achievements
+
+@api_router.get("/achievements/user")
+async def get_user_achievements(current_user: User = Depends(get_current_user)):
+    """Get user's earned achievements"""
+    user_achievements = await db.user_achievements.find({"user_id": current_user.id}).to_list(100)
+    
+    # Get achievement details
+    achievement_ids = [ua["achievement_id"] for ua in user_achievements]
+    achievements = await db.achievements.find({"id": {"$in": achievement_ids}}).to_list(100)
+    
+    # Combine data
+    result = []
+    for user_ach in user_achievements:
+        achievement = next((a for a in achievements if a["id"] == user_ach["achievement_id"]), None)
+        if achievement:
+            result.append({
+                **achievement,
+                "earned_at": user_ach["earned_at"],
+                "points": user_ach["points"]
+            })
+    
+    # Clean up ObjectId
+    for item in result:
+        if "_id" in item:
+            del item["_id"]
+    
+    return result
+
+@api_router.post("/achievements/check")
+async def check_achievements(current_user: User = Depends(get_current_user), request: Request = None):
+    """Check and award new achievements"""
+    if current_user.role != UserRole.STUDENT:
+        return {"new_achievements": []}
+    
+    # Get user's workout attempts and progress
+    attempts = await db.workout_attempts.find({"student_id": current_user.id}).to_list(1000)
+    progress_records = await db.workout_progress.find({"student_id": current_user.id}).to_list(100)
+    
+    new_achievements = []
+    
+    # Check for first workout achievement
+    if len(attempts) == 1:  # Just completed first workout
+        achievement = await db.achievements.find_one({"achievement_type": "first_workout"})
+        if achievement:
+            await award_achievement(current_user.id, achievement["id"], achievement["points"])
+            new_achievements.append(achievement)
+    
+    # Check for speed solver achievement
+    fast_attempts = [a for a in attempts if a.get("time_spent_minutes", 999) < 5 and a.get("is_correct")]
+    if len(fast_attempts) >= 10:
+        achievement = await db.achievements.find_one({"achievement_type": "speed_solver"})
+        if achievement:
+            existing = await db.user_achievements.find_one({"user_id": current_user.id, "achievement_id": achievement["id"]})
+            if not existing:
+                await award_achievement(current_user.id, achievement["id"], achievement["points"])
+                new_achievements.append(achievement)
+    
+    # Check for perfectionist achievement
+    correct_attempts = [a for a in attempts if a.get("is_correct")]
+    if len(correct_attempts) >= 15:
+        achievement = await db.achievements.find_one({"achievement_type": "perfectionist"}) 
+        if achievement:
+            existing = await db.user_achievements.find_one({"user_id": current_user.id, "achievement_id": achievement["id"]})
+            if not existing:
+                await award_achievement(current_user.id, achievement["id"], achievement["points"])
+                new_achievements.append(achievement)
+    
+    return {"new_achievements": new_achievements}
+
+async def award_achievement(user_id: str, achievement_id: str, points: int):
+    """Award achievement to user"""
+    user_achievement = {
+        "id": str(uuid.uuid4()),
+        "user_id": user_id,
+        "achievement_id": achievement_id,
+        "earned_at": datetime.utcnow(),
+        "points": points
+    }
+    await db.user_achievements.insert_one(user_achievement)
+
+# Quiz System API Routes
+class Quiz(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    title: str
+    description: str
+    course_id: Optional[str] = None
+    learning_level: LearningLevel
+    skill_areas: List[SkillArea]
+    questions: List[Dict[str, Any]]
+    time_limit_minutes: int
+    passing_score: int
+    created_by: str
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    is_active: bool = True
+
+class QuizAttempt(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    student_id: str
+    quiz_id: str
+    answers: Dict[str, Any]
+    score: int
+    passed: bool
+    time_spent_minutes: int
+    started_at: datetime = Field(default_factory=datetime.utcnow)
+    completed_at: Optional[datetime] = None
+
+@api_router.get("/quizzes")
+async def get_quizzes(
+    learning_level: Optional[LearningLevel] = None,
+    course_id: Optional[str] = None,
+    current_user: User = Depends(get_current_user)
+):
+    """Get available quizzes"""
+    query = {"is_active": True}
+    if learning_level:
+        query["learning_level"] = learning_level.value
+    if course_id:
+        query["course_id"] = course_id
+    
+    quizzes = await db.quizzes.find(query).to_list(100)
+    
+    # Remove correct answers for students
+    if current_user.role == UserRole.STUDENT:
+        for quiz in quizzes:
+            for question in quiz.get("questions", []):
+                if "correct_answer" in question:
+                    del question["correct_answer"]
+                if "explanation" in question:
+                    del question["explanation"]
+    
+    # Clean up ObjectId
+    for quiz in quizzes:
+        if "_id" in quiz:
+            del quiz["_id"]
+    
+    return quizzes
+
+@api_router.get("/quizzes/{quiz_id}")
+async def get_quiz(quiz_id: str, current_user: User = Depends(get_current_user)):
+    """Get specific quiz"""
+    quiz = await db.quizzes.find_one({"id": quiz_id, "is_active": True})
+    if not quiz:
+        raise HTTPException(status_code=404, detail="Quiz not found")
+    
+    # Remove answers for students
+    if current_user.role == UserRole.STUDENT:
+        for question in quiz.get("questions", []):
+            if "correct_answer" in question:
+                del question["correct_answer"]
+            if "explanation" in question:
+                del question["explanation"]
+    
+    if "_id" in quiz:
+        del quiz["_id"]
+    
+    return quiz
+
+@api_router.post("/quizzes/{quiz_id}/attempt")
+async def submit_quiz(
+    quiz_id: str,
+    answers: Dict[str, Any],
+    current_user: User = Depends(get_current_user),
+    request: Request = None
+):
+    """Submit quiz attempt"""
+    if current_user.role != UserRole.STUDENT:
+        raise HTTPException(status_code=403, detail="Only students can take quizzes")
+    
+    quiz = await db.quizzes.find_one({"id": quiz_id, "is_active": True})
+    if not quiz:
+        raise HTTPException(status_code=404, detail="Quiz not found")
+    
+    # Calculate score
+    total_questions = len(quiz["questions"])
+    correct_answers = 0
+    
+    for i, question in enumerate(quiz["questions"]):
+        user_answer = answers.get(f"question_{i}")
+        correct_answer = question["correct_answer"]
+        if user_answer == correct_answer:
+            correct_answers += 1
+    
+    score = (correct_answers / total_questions) * 100
+    passed = score >= quiz["passing_score"]
+    
+    # Save attempt
+    attempt = {
+        "id": str(uuid.uuid4()),
+        "student_id": current_user.id,
+        "quiz_id": quiz_id,
+        "answers": answers,
+        "score": score,
+        "passed": passed,
+        "time_spent_minutes": 0,  # TODO: Track actual time
+        "started_at": datetime.utcnow(),
+        "completed_at": datetime.utcnow()
+    }
+    
+    await db.quiz_attempts.insert_one(attempt)
+    
+    # Log activity
+    await log_activity(
+        current_user.id,
+        ActivityType.COURSE_COMPLETED if passed else ActivityType.COURSE_STARTED,
+        {
+            "quiz_id": quiz_id,
+            "quiz_title": quiz["title"],
+            "score": score,
+            "passed": passed
+        },
+        request
+    )
+    
+    return {
+        "score": score,
+        "passed": passed,
+        "correct_answers": correct_answers,
+        "total_questions": total_questions,
+        "feedback": quiz["questions"]  # Include explanations in response
+    }
+
+# Enhanced Progress API
+@api_router.get("/progress/comprehensive")
+async def get_comprehensive_progress(current_user: User = Depends(get_current_user)):
+    """Get detailed progress across all learning areas"""
+    if current_user.role != UserRole.STUDENT:
+        raise HTTPException(status_code=403, detail="Only students can view progress")
+    
+    # Get workout progress
+    workout_progress = await db.workout_progress.find({"student_id": current_user.id}).to_list(100)
+    
+    # Get quiz attempts
+    quiz_attempts = await db.quiz_attempts.find({"student_id": current_user.id}).to_list(100)
+    
+    # Get achievements
+    user_achievements = await db.user_achievements.find({"user_id": current_user.id}).to_list(100)
+    
+    # Get learning path
+    learning_path = await db.learning_paths.find_one({"student_id": current_user.id})
+    
+    # Calculate comprehensive stats
+    total_workout_attempts = await db.workout_attempts.count_documents({"student_id": current_user.id})
+    successful_workouts = await db.workout_attempts.count_documents({"student_id": current_user.id, "is_correct": True})
+    
+    success_rate = (successful_workouts / total_workout_attempts * 100) if total_workout_attempts > 0 else 0
+    
+    # Clean up ObjectId
+    for item in workout_progress:
+        if "_id" in item:
+            del item["_id"]
+    
+    return {
+        "learning_path": learning_path,
+        "workout_progress": workout_progress,
+        "quiz_performance": {
+            "total_attempts": len(quiz_attempts),
+            "passed_quizzes": len([q for q in quiz_attempts if q["passed"]]),
+            "average_score": sum(q["score"] for q in quiz_attempts) / len(quiz_attempts) if quiz_attempts else 0
+        },
+        "achievements": {
+            "total_earned": len(user_achievements),
+            "total_points": sum(a["points"] for a in user_achievements)
+        },
+        "overall_stats": {
+            "total_workout_attempts": total_workout_attempts,
+            "success_rate": success_rate,
+            "current_streak": 0  # TODO: Calculate streak
+        }
+    }
+
 # Basic health check
 @api_router.get("/")
 async def root():
@@ -1049,7 +1342,7 @@ async def root():
         "established": "1982",
         "legacy": "42 Years of Educational Excellence",
         "focus": "AI • Logical Thinking • Creative Problem Solving • Future Career Skills",
-        "version": "2.0.0 - Unified Platform"
+        "version": "2.1.0 - Enhanced Learning Experience"
     }
 
 # Include router
