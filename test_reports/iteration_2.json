@@ -116,7 +116,7 @@
   ],
 
   "testing_environment": {
-    "platform_url": "https://ai-kids-learn-4.preview.emergentagent.com",
+    "platform_url": "https://edtech-platform-6.preview.emergentagent.com",
     "test_credentials": {
       "student": "student@tecaikids.com / student123",
       "admin": "admin@tecaikids.com / admin123"

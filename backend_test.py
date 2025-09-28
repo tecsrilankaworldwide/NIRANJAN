@@ -11,7 +11,7 @@ from datetime import datetime
 import time
 
 class TecPlatformTester:
-    def __init__(self, base_url="https://ai-kids-learn-4.preview.emergentagent.com"):
+    def __init__(self, base_url="https://edtech-platform-6.preview.emergentagent.com"):
         self.base_url = base_url
         self.api_url = f"{base_url}/api"
         self.token = None
@@ -359,7 +359,7 @@ def main():
     """Main testing function"""
     print("🎯 TEC Future-Ready Learning Platform - Backend API Testing")
     print("🏢 TEC Sri Lanka Worldwide (Pvt.) Ltd - 42 Years of Excellence")
-    print("🌐 Testing Platform: https://ai-kids-learn-4.preview.emergentagent.com")
+    print("🌐 Testing Platform: https://edtech-platform-6.preview.emergentagent.com")
     print()
     
     tester = TecPlatformTester()

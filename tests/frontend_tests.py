@@ -16,7 +16,7 @@ class FrontendTestSuite:
     """Frontend testing using Selenium WebDriver"""
     
     def __init__(self):
-        self.base_url = "https://ai-kids-learn-4.preview.emergentagent.com"
+        self.base_url = "https://edtech-platform-6.preview.emergentagent.com"
         self.driver = None
         
     def setup_driver(self):
@@ -212,7 +212,7 @@ def test_frontend_accessibility():
     """Test basic frontend accessibility"""
     try:
         # Simple request test
-        base_url = "https://ai-kids-learn-4.preview.emergentagent.com"
+        base_url = "https://edtech-platform-6.preview.emergentagent.com"
         
         # Test main pages are accessible
         pages_to_test = [
