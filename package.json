@@ -1,0 +1,35 @@
+{
+  "name": "tec-platform-root",
+  "version": "2.2.0",
+  "description": "TEC Future-Ready Learning Platform - Complete educational ecosystem",
+  "scripts": {
+    "heroku-prebuild": "echo 'Installing dependencies...'",
+    "heroku-postbuild": "cd frontend && npm install && npm run build && cd ../backend && pip install -r requirements.txt",
+    "start": "cd backend && python -m uvicorn server:app --host=0.0.0.0 --port=$PORT",
+    "dev": "concurrently \"cd backend && uvicorn server:app --reload\" \"cd frontend && npm start\"",
+    "build": "cd frontend && npm run build",
+    "deploy": "git push heroku main"
+  },
+  "engines": {
+    "node": "18.x",
+    "python": "3.11.x"
+  },
+  "dependencies": {
+    "concurrently": "^8.2.0",
+    "serve": "^14.2.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/user/tec-platform"
+  },
+  "keywords": [
+    "education",
+    "learning",
+    "ai",
+    "sri-lanka",
+    "children",
+    "future-ready"
+  ],
+  "author": "TEC Sri Lanka Worldwide (Pvt.) Ltd",
+  "license": "Private"
+}
