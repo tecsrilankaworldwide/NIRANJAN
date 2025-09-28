@@ -1335,6 +1335,16 @@ async def get_comprehensive_progress(current_user: User = Depends(get_current_us
 # Stripe Payment Integration
 from stripe_integration import TecStripeIntegration
 
+# Performance and Security Enhancements
+from performance_optimizations import (
+    performance_monitor, cache_manager, DatabaseOptimizer, 
+    optimize_user_queries, cleanup_old_data, rate_limiter
+)
+from security_enhancements import (
+    SecurityValidator, SessionManager, AuditLogger,
+    get_client_ip, detect_suspicious_activity
+)
+
 # Business Integration Models
 class EnrollmentRequest(BaseModel):
     childName: str
