@@ -173,7 +173,7 @@ REACT_APP_BACKEND_URL=https://www.tecaikids.com  # Frontend config
 ### **Local Development Setup**
 ```bash
 # Clone repository
-git clone https://github.com/YOUR_USERNAME/tec-platform.git
+git clone https://github.com/tecsrilankaworldwide/tec-platform-production.git
 cd tec-platform
 
 # Backend setup
