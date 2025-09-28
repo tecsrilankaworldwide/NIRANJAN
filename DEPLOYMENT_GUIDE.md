@@ -21,7 +21,7 @@
 ### Option A: One-Click Deploy (Recommended)
 1. **Click this button**: 
 
-[![Deploy to Heroku](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/user/tec-platform)
+[![Deploy to Heroku](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/tecsrilankaworldwide/tec-platform-production)
 
 2. **Fill in app details**:
    - **App name**: `tecaikids` or `tec-platform-2024`
