@@ -656,6 +656,24 @@ const Dashboard = () => {
                         </div>
                       </div>
                     </a>
+                    <a href="/quizzes" className="block p-4 bg-gradient-to-r from-yellow-50 to-orange-50 rounded-xl hover:from-yellow-100 hover:to-orange-100 transition-colors border-2 border-yellow-100 hover:border-yellow-200">
+                      <div className="flex items-center">
+                        <span className="text-3xl mr-4">📝</span>
+                        <div>
+                          <p className="font-bold text-gray-800">Knowledge Quizzes</p>
+                          <p className="text-sm text-yellow-600">Test your understanding</p>
+                        </div>
+                      </div>
+                    </a>
+                    <a href="/achievements" className="block p-4 bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl hover:from-purple-100 hover:to-pink-100 transition-colors border-2 border-purple-100 hover:border-purple-200">
+                      <div className="flex items-center">
+                        <span className="text-3xl mr-4">🏆</span>
+                        <div>
+                          <p className="font-bold text-gray-800">My Achievements</p>
+                          <p className="text-sm text-purple-600">Track your milestones</p>
+                        </div>
+                      </div>
+                    </a>
                   </>
                 )}
                 {isTeacher && (
