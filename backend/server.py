@@ -1509,38 +1509,24 @@ async def get_enrollment_programs():
     programs = [
         {
             "id": "foundation_monthly",
-            "name": "Little Learners Foundation",
-            "age_range": "4-6 years",
+            "name": "Foundation Level Program",
+            "age_range": "5-8 years",
             "price": "LKR 1,200/month",
             "description": "Basic AI & Logic • Building blocks of future thinking"
         },
         {
-            "id": "foundation_advanced", 
-            "name": "Young Explorers Discovery",
-            "age_range": "7-9 years", 
-            "price": "LKR 1,200/month",
-            "description": "Advanced foundation with creative problem solving"
-        },
-        {
             "id": "development_monthly",
-            "name": "Smart Kids Mastery",
-            "age_range": "10-12 years",
+            "name": "Development Level Program",
+            "age_range": "9-12 years",
             "price": "LKR 1,800/month", 
             "description": "Logical Thinking & Creativity • Expanding cognitive abilities"
         },
         {
             "id": "mastery_monthly",
-            "name": "Tech Teens Professional", 
-            "age_range": "13-15 years",
+            "name": "Mastery Level Program", 
+            "age_range": "13-16 years",
             "price": "LKR 2,800/month",
             "description": "Future Career Skills • Leadership preparation"
-        },
-        {
-            "id": "mastery_advanced",
-            "name": "Future Leaders Mastery",
-            "age_range": "16-18 years",
-            "price": "LKR 2,800/month", 
-            "description": "Complete future readiness with entrepreneurship"
         }
     ]
     
