@@ -1,0 +1,5 @@
+# Netlify/Heroku SPA redirects
+/*    /index.html   200
+
+# API routes to backend
+/api/*  https://www.tecaikids.com/api/:splat  200!
