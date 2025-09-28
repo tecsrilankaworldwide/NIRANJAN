@@ -1392,21 +1392,278 @@ const AnalyticsDashboard = () => (
   </div>
 );
 
-const SubscriptionPage = () => (
-  <div className="min-h-screen bg-gray-50">
-    <Navigation />
-    <div className="container mx-auto px-4 py-8 text-center">
-      <div className="bg-white rounded-2xl p-12 shadow-lg">
-        <div className="text-6xl mb-6">💎</div>
-        <h1 className="text-3xl font-bold mb-4">Premium Future-Ready Plans</h1>
-        <p className="text-xl text-gray-600 mb-8">Age-based pricing with physical materials coming soon!</p>
-        <div className="bg-gradient-to-r from-purple-100 to-pink-100 p-6 rounded-xl">
-          <p className="text-purple-800 font-medium">Complete learning ecosystem with quarterly materials delivery.</p>
+const SubscriptionPage = () => {
+  const { user, token } = useAuth();
+  const [packages, setPackages] = useState({});
+  const [loading, setLoading] = useState(true);
+  const [processingPayment, setProcessingPayment] = useState(false);
+  const [userSubscription, setUserSubscription] = useState(null);
+  const [paymentStatus, setPaymentStatus] = useState(null);
+
+  useEffect(() => {
+    const loadSubscriptionData = async () => {
+      try {
+        const [packagesRes, subscriptionRes] = await Promise.all([
+          axios.get(`${API}/subscription/packages`),
+          axios.get(`${API}/subscription/my-status`, {
+            headers: { Authorization: `Bearer ${token}` }
+          })
+        ]);
+        
+        setPackages(packagesRes.data);
+        setUserSubscription(subscriptionRes.data);
+        
+        // Check for payment return
+        const urlParams = new URLSearchParams(window.location.search);
+        const sessionId = urlParams.get('session_id');
+        if (sessionId) {
+          await checkPaymentStatus(sessionId);
+        }
+      } catch (error) {
+        console.error('Failed to load subscription data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (token) {
+      loadSubscriptionData();
+    }
+  }, [token]);
+
+  const checkPaymentStatus = async (sessionId, attempts = 0) => {
+    const maxAttempts = 5;
+    const pollInterval = 2000;
+
+    if (attempts >= maxAttempts) {
+      setPaymentStatus({ type: 'error', message: 'Payment status check timed out. Please check your email for confirmation.' });
+      return;
+    }
+
+    try {
+      const response = await axios.get(`${API}/subscription/status/${sessionId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      
+      if (response.data.payment_status === 'paid') {
+        setPaymentStatus({ type: 'success', message: 'Payment successful! Your subscription has been activated.' });
+        // Reload subscription status
+        const subscriptionRes = await axios.get(`${API}/subscription/my-status`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        setUserSubscription(subscriptionRes.data);
+        return;
+      } else if (response.data.status === 'expired') {
+        setPaymentStatus({ type: 'error', message: 'Payment session expired. Please try again.' });
+        return;
+      }
+
+      // Continue polling
+      setPaymentStatus({ type: 'processing', message: 'Payment is being processed...' });
+      setTimeout(() => checkPaymentStatus(sessionId, attempts + 1), pollInterval);
+    } catch (error) {
+      console.error('Error checking payment status:', error);
+      setPaymentStatus({ type: 'error', message: 'Error checking payment status. Please try again.' });
+    }
+  };
+
+  const handleSubscribe = async (packageId) => {
+    if (processingPayment) return;
+    
+    setProcessingPayment(true);
+    try {
+      const originUrl = window.location.origin;
+      const response = await axios.post(`${API}/subscription/checkout`, {
+        package_id: packageId,
+        origin_url: originUrl
+      }, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      // Redirect to Stripe checkout
+      window.location.href = response.data.checkout_url;
+    } catch (error) {
+      console.error('Payment error:', error);
+      alert('Failed to create payment session. Please try again.');
+    } finally {
+      setProcessingPayment(false);
+    }
+  };
+
+  const getLevelIcon = (level) => {
+    const icons = {
+      foundation: '🌱',
+      development: '🧠', 
+      mastery: '🎯'
+    };
+    return icons[level] || '📚';
+  };
+
+  const formatPrice = (price, currency) => {
+    return `${currency.toUpperCase()} ${price.toLocaleString()}`;
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="animate-pulse space-y-4">
+          <div className="h-8 bg-gray-300 rounded w-64"></div>
+          <div className="grid md:grid-cols-3 gap-6">
+            {[1,2,3].map(i => (
+              <div key={i} className="h-96 bg-gray-300 rounded-xl w-80"></div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <Navigation />
+      
+      {/* Payment Status */}
+      {paymentStatus && (
+        <div className={`container mx-auto px-4 py-4`}>
+          <div className={`p-4 rounded-lg text-center ${
+            paymentStatus.type === 'success' ? 'bg-green-100 text-green-800' :
+            paymentStatus.type === 'error' ? 'bg-red-100 text-red-800' :
+            'bg-yellow-100 text-yellow-800'
+          }`}>
+            {paymentStatus.message}
+          </div>
+        </div>
+      )}
+
+      <div className="container mx-auto px-4 py-8">
+        {/* Header */}
+        <div className="text-center mb-12">
+          <h1 className="text-4xl font-bold text-gray-800 mb-4">💎 Future-Ready Learning Plans</h1>
+          <p className="text-xl text-gray-600">Choose the perfect learning journey for your child's future success</p>
+        </div>
+
+        {/* Current Subscription Status */}
+        {userSubscription?.has_subscription && (
+          <div className="bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-2xl p-8 mb-8">
+            <div className="text-center">
+              <h2 className="text-2xl font-bold mb-4">✅ Active Subscription</h2>
+              <p className="text-lg mb-2">
+                {packages[userSubscription.subscription_package]?.name || 'Current Plan'}
+              </p>
+              <p className="text-green-100">
+                Valid until: {new Date(userSubscription.subscription_expires).toLocaleDateString()}
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* Subscription Plans */}
+        <div className="grid lg:grid-cols-3 gap-8 mb-12">
+          {Object.entries(packages).filter(([key]) => key.includes('monthly')).map(([packageId, pkg]) => (
+            <div key={packageId} className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 border border-gray-100">
+              <div className="p-8">
+                <div className="text-center mb-6">
+                  <div className="text-5xl mb-4">{getLevelIcon(pkg.learning_level)}</div>
+                  <h3 className="text-2xl font-bold text-gray-800 mb-2">{pkg.name}</h3>
+                  <p className="text-gray-600 mb-4">{pkg.description}</p>
+                  <div className="text-4xl font-bold text-purple-600 mb-2">
+                    {formatPrice(pkg.price, pkg.currency)}
+                  </div>
+                  <p className="text-sm text-gray-500">per month</p>
+                </div>
+
+                <div className="space-y-3 mb-8">
+                  {pkg.features.map((feature, index) => (
+                    <div key={index} className="flex items-center text-sm">
+                      <span className="text-green-500 mr-3">✅</span>
+                      <span className="text-gray-700">{feature}</span>
+                    </div>
+                  ))}
+                </div>
+
+                <button
+                  onClick={() => handleSubscribe(packageId)}
+                  disabled={processingPayment || (userSubscription?.subscription_package === packageId)}
+                  className={`w-full py-4 px-6 rounded-xl font-semibold text-lg transition-colors ${
+                    userSubscription?.subscription_package === packageId
+                      ? 'bg-green-100 text-green-700 cursor-not-allowed'
+                      : 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white hover:from-purple-700 hover:to-indigo-700'
+                  }`}
+                >
+                  {userSubscription?.subscription_package === packageId ? '✅ Current Plan' :
+                   processingPayment ? '⏳ Processing...' : '🚀 Subscribe Now'}
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Quarterly Plans */}
+        <div className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-2xl p-8 mb-8">
+          <div className="text-center mb-8">
+            <h2 className="text-3xl font-bold mb-4">📦 Quarterly Plans with Physical Materials</h2>
+            <p className="text-xl text-purple-100">Save 10% + Get Physical Learning Materials Delivered</p>
+          </div>
+
+          <div className="grid lg:grid-cols-3 gap-6">
+            {Object.entries(packages).filter(([key]) => key.includes('quarterly')).map(([packageId, pkg]) => (
+              <div key={packageId} className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20">
+                <div className="text-center mb-6">
+                  <div className="text-4xl mb-3">{getLevelIcon(pkg.learning_level)}</div>
+                  <h3 className="text-xl font-bold mb-2">{pkg.name}</h3>
+                  <div className="text-2xl font-bold mb-2">
+                    {formatPrice(pkg.price, pkg.currency)}
+                  </div>
+                  <p className="text-sm text-purple-100">3 months + materials</p>
+                </div>
+
+                <button
+                  onClick={() => handleSubscribe(packageId)}
+                  disabled={processingPayment || (userSubscription?.subscription_package === packageId)}
+                  className={`w-full py-3 px-4 rounded-lg font-semibold transition-colors ${
+                    userSubscription?.subscription_package === packageId
+                      ? 'bg-green-500 text-white cursor-not-allowed'
+                      : 'bg-white text-purple-600 hover:bg-gray-100'
+                  }`}
+                >
+                  {userSubscription?.subscription_package === packageId ? '✅ Active' :
+                   processingPayment ? '⏳ Processing...' : '📦 Get Quarterly'}
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Value Proposition */}
+        <div className="bg-white rounded-2xl shadow-lg p-8">
+          <h3 className="text-2xl font-bold text-center mb-8 text-gray-800">🎯 Why Choose TEC Future-Ready Learning?</h3>
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="text-center">
+              <div className="text-4xl mb-3">🏆</div>
+              <h4 className="font-semibold mb-2">42 Years Excellence</h4>
+              <p className="text-sm text-gray-600">Pioneer in educational technology since 1982</p>
+            </div>
+            <div className="text-center">
+              <div className="text-4xl mb-3">🤖</div>
+              <h4 className="font-semibold mb-2">AI-Powered Learning</h4>
+              <p className="text-sm text-gray-600">Cutting-edge AI literacy for future readiness</p>
+            </div>
+            <div className="text-center">
+              <div className="text-4xl mb-3">🧠</div>
+              <h4 className="font-semibold mb-2">Logical Thinking</h4>
+              <p className="text-sm text-gray-600">Interactive workouts for cognitive development</p>
+            </div>
+            <div className="text-center">
+              <div className="text-4xl mb-3">📈</div>
+              <h4 className="font-semibold mb-2">Progress Tracking</h4>
+              <p className="text-sm text-gray-600">Detailed analytics and achievement system</p>
+            </div>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 // Footer Component
 const Footer = () => {
