@@ -1312,10 +1312,21 @@ async def get_comprehensive_progress(current_user: User = Depends(get_current_us
     
     success_rate = (successful_workouts / total_workout_attempts * 100) if total_workout_attempts > 0 else 0
     
-    # Clean up ObjectId
+    # Clean up ObjectId from all collections
     for item in workout_progress:
         if "_id" in item:
             del item["_id"]
+    
+    for item in quiz_attempts:
+        if "_id" in item:
+            del item["_id"]
+    
+    for item in user_achievements:
+        if "_id" in item:
+            del item["_id"]
+    
+    if learning_path and "_id" in learning_path:
+        del learning_path["_id"]
     
     return {
         "learning_path": learning_path,
