@@ -507,6 +507,10 @@ async def get_learning_path(current_user: User = Depends(get_current_user)):
         )
         await db.learning_paths.insert_one(learning_path.dict())
         learning_path = learning_path.dict()
+    else:
+        # Clean up ObjectId for JSON serialization
+        if "_id" in learning_path:
+            del learning_path["_id"]
     
     # Add framework information
     framework_info = LEARNING_FRAMEWORK.get(learning_path["learning_level"], LEARNING_FRAMEWORK["foundation"])
