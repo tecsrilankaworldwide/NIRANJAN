@@ -39,8 +39,8 @@ const LandingPage = () => {
     },
     {
       id: 'development_monthly',
-      name: 'Smart Kids Mastery',
-      ageRange: '10-12 years', 
+      name: 'Development Level Program',
+      ageRange: '9-12 years', 
       price: 'LKR 1,800/month',
       icon: '🧠',
       description: 'Logical Thinking & Creativity • Expanding cognitive abilities',
@@ -48,35 +48,25 @@ const LandingPage = () => {
         'Advanced logical reasoning',
         'Creative problem solving',
         'AI literacy deep dive',
-        'Systems thinking introduction'
+        'Systems thinking introduction',
+        'Interactive brain workouts',
+        'Personalized learning paths'
       ]
     },
     {
       id: 'mastery_monthly',
-      name: 'Tech Teens Professional',
-      ageRange: '13-15 years',
+      name: 'Mastery Level Program',
+      ageRange: '13-16 years',
       price: 'LKR 2,800/month', 
-      icon: '💻',
+      icon: '🎯',
       description: 'Future Career Skills • Leadership preparation',
       features: [
         'Future career preparation',
         'Advanced AI applications',
         'Innovation methodologies',
-        'Leadership development'
-      ]
-    },
-    {
-      id: 'mastery_advanced',
-      name: 'Future Leaders Mastery',
-      ageRange: '16-18 years',
-      price: 'LKR 2,800/month',
-      icon: '🎯',
-      description: 'Complete future readiness with entrepreneurship',
-      features: [
+        'Leadership development',
         'Entrepreneurship basics',
-        'Real-world project experience',
-        'Advanced innovation methods',
-        'Professional development'
+        'Real-world project experience'
       ]
     }
   ];
