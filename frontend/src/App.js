@@ -1499,6 +1499,16 @@ function App() {
                 <WorkoutsPage />
               </ProtectedRoute>
             } />
+            <Route path="/quizzes" element={
+              <ProtectedRoute requireRole="student">
+                <QuizPage />
+              </ProtectedRoute>
+            } />
+            <Route path="/achievements" element={
+              <ProtectedRoute requireRole="student">
+                <AchievementPage />
+              </ProtectedRoute>
+            } />
             <Route path="/subscription" element={
               <ProtectedRoute requireRole="student">
                 <SubscriptionPage />
