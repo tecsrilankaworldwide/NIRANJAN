@@ -23,8 +23,8 @@ const LandingPage = () => {
   const programs = [
     {
       id: 'foundation_monthly',
-      name: 'Little Learners Foundation',
-      ageRange: '4-6 years',
+      name: 'Foundation Level Program',
+      ageRange: '5-8 years',
       price: 'LKR 1,200/month',
       icon: '🌱',
       description: 'Basic AI & Logic • Building blocks of future thinking',
@@ -32,21 +32,9 @@ const LandingPage = () => {
         'Interactive learning activities',
         'Basic AI literacy concepts',
         'Logical thinking fundamentals',
-        'Age-appropriate challenges'
-      ]
-    },
-    {
-      id: 'foundation_advanced',
-      name: 'Young Explorers Discovery', 
-      ageRange: '7-9 years',
-      price: 'LKR 1,200/month',
-      icon: '🚀',
-      description: 'Advanced foundation with creative problem solving',
-      features: [
         'Creative problem solving basics',
         'Pattern recognition games',
-        'Interactive brain workouts',
-        'Progress tracking'
+        'Age-appropriate challenges'
       ]
     },
     {
