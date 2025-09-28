@@ -1332,6 +1332,87 @@ async def get_comprehensive_progress(current_user: User = Depends(get_current_us
         }
     }
 
+# Stripe Payment Integration
+from stripe_integration import TecStripeIntegration
+
+# Initialize Stripe integration
+stripe_integration = TecStripeIntegration(db)
+
+class SubscriptionCheckoutRequest(BaseModel):
+    package_id: str
+    origin_url: str
+
+@api_router.get("/subscription/packages")
+async def get_subscription_packages():
+    """Get all available subscription packages"""
+    return stripe_integration.get_all_packages()
+
+@api_router.get("/subscription/packages/{package_id}")
+async def get_package_details(package_id: str):
+    """Get specific package details"""
+    return stripe_integration.get_package_info(package_id)
+
+@api_router.post("/subscription/checkout")
+async def create_subscription_checkout(
+    checkout_request: SubscriptionCheckoutRequest,
+    current_user: User = Depends(get_current_user),
+    request: Request = None
+):
+    """Create Stripe checkout session for subscription"""
+    if current_user.role != UserRole.STUDENT:
+        raise HTTPException(status_code=403, detail="Only students can purchase subscriptions")
+    
+    try:
+        session = await stripe_integration.create_checkout_session(
+            package_id=checkout_request.package_id,
+            user_id=current_user.id,
+            origin_url=checkout_request.origin_url,
+            request=request
+        )
+        
+        return {
+            "checkout_url": session.url,
+            "session_id": session.session_id,
+            "success": True
+        }
+        
+    except Exception as e:
+        logger.error(f"Checkout creation failed: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/subscription/status/{session_id}")
+async def get_payment_status(
+    session_id: str,
+    current_user: User = Depends(get_current_user),
+    request: Request = None
+):
+    """Get payment status for checkout session"""
+    try:
+        status = await stripe_integration.get_checkout_status(session_id, request)
+        return status
+    except Exception as e:
+        logger.error(f"Status check failed: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/subscription/my-status")
+async def get_my_subscription_status(current_user: User = Depends(get_current_user)):
+    """Get current user's subscription status"""
+    return await stripe_integration.get_user_subscription_status(current_user.id)
+
+@api_router.post("/webhook/stripe")
+async def stripe_webhook(request: Request):
+    """Handle Stripe webhooks"""
+    try:
+        body = await request.body()
+        stripe_signature = request.headers.get("Stripe-Signature", "")
+        
+        result = await stripe_integration.handle_webhook(body, stripe_signature, request)
+        return result
+        
+    except Exception as e:
+        logger.error(f"Webhook processing failed: {e}")
+        raise HTTPException(status_code=400, detail="Webhook processing failed")
+
 # Basic health check
 @api_router.get("/")
 async def root():
@@ -1342,7 +1423,7 @@ async def root():
         "established": "1982",
         "legacy": "42 Years of Educational Excellence",
         "focus": "AI • Logical Thinking • Creative Problem Solving • Future Career Skills",
-        "version": "2.1.0 - Enhanced Learning Experience"
+        "version": "2.2.0 - Payment Integration Complete"
     }
 
 # Include router
