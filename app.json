@@ -1,7 +1,7 @@
 {
   "name": "TEC Future-Ready Learning Platform",
   "description": "Complete educational ecosystem for ages 4-18 with AI literacy, logical thinking, and future career skills by TEC Sri Lanka Worldwide (Pvt.) Ltd",
-  "repository": "https://github.com/user/tec-platform",
+  "repository": "https://github.com/tecsrilankaworldwide/tec-platform-production",
   "logo": "https://tecaikids.com/logo.png",
   "keywords": ["education", "ai", "learning", "sri-lanka", "children"],
   "success_url": "/",
