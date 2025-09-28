@@ -1754,7 +1754,9 @@ function App() {
       <div className="App min-h-screen bg-gray-50">
         <BrowserRouter>
           <Routes>
+            <Route path="/landing" element={<LandingPage />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
             <Route path="/dashboard" element={
               <ProtectedRoute>
                 <Dashboard />
