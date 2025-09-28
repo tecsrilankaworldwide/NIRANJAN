@@ -2,7 +2,7 @@
 
 ## **Complete Educational Ecosystem for Ages 4-18**
 
-[![Deploy to Heroku](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/YOUR_USERNAME/tec-platform)
+[![Deploy to Heroku](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/tecsrilankaworldwide/tec-platform-production)
 
 > **Built by TEC Sri Lanka Worldwide (Pvt.) Ltd** - 42 Years of Educational Excellence since 1982
 
