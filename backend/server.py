@@ -1425,6 +1425,210 @@ async def stripe_webhook(request: Request):
         logger.error(f"Webhook processing failed: {e}")
         raise HTTPException(status_code=400, detail="Webhook processing failed")
 
+# Business Integration API Routes - NINA → TEC
+@api_router.post("/enrollment/submit")
+async def submit_enrollment(enrollment: EnrollmentRequest, request: Request = None):
+    """Handle enrollment submissions from NINA landing page"""
+    try:
+        # Create enrollment record
+        enrollment_record = {
+            "id": str(uuid.uuid4()),
+            "child_name": enrollment.childName,
+            "parent_name": enrollment.parentName,
+            "email": enrollment.email,
+            "phone": enrollment.phone,
+            "child_age": enrollment.childAge,
+            "selected_program": enrollment.selectedProgram,
+            "parent_message": enrollment.parentMessage,
+            "source": enrollment.source,
+            "status": "pending_registration",
+            "created_at": datetime.utcnow(),
+            "ip_address": request.client.host if request else None
+        }
+        
+        # Save enrollment
+        await db.enrollments.insert_one(enrollment_record)
+        
+        # Check if user already exists
+        existing_user = await db.users.find_one({"email": enrollment.email})
+        
+        if existing_user:
+            # Update existing user's profile with enrollment info
+            await db.users.update_one(
+                {"email": enrollment.email},
+                {
+                    "$set": {
+                        "child_name": enrollment.childName,
+                        "phone": enrollment.phone,
+                        "preferred_package": enrollment.selectedProgram,
+                        "enrollment_source": "nina_landing",
+                        "updated_at": datetime.utcnow()
+                    }
+                }
+            )
+            
+            enrollment_status = "existing_user_updated"
+        else:
+            enrollment_status = "new_enrollment_created"
+        
+        # Log enrollment activity
+        activity_log = {
+            "id": str(uuid.uuid4()),
+            "user_id": existing_user["id"] if existing_user else None,
+            "activity_type": "enrollment_submitted",
+            "description": f"Enrollment submitted for {enrollment.childName} in {enrollment.selectedProgram}",
+            "metadata": {
+                "source": enrollment.source,
+                "program": enrollment.selectedProgram,
+                "child_age": enrollment.childAge,
+                "parent_email": enrollment.email
+            },
+            "timestamp": datetime.utcnow(),
+            "ip_address": request.client.host if request else None
+        }
+        
+        await db.activity_logs.insert_one(activity_log)
+        
+        logger.info(f"Enrollment submitted: {enrollment.email} for program {enrollment.selectedProgram}")
+        
+        return {
+            "success": True,
+            "message": "Enrollment submitted successfully",
+            "enrollment_id": enrollment_record["id"],
+            "status": enrollment_status,
+            "next_step": "registration" if not existing_user else "login"
+        }
+        
+    except Exception as e:
+        logger.error(f"Enrollment submission failed: {e}")
+        raise HTTPException(status_code=500, detail="Enrollment submission failed")
+
+@api_router.get("/enrollment/programs")
+async def get_enrollment_programs():
+    """Get available programs for enrollment"""
+    programs = [
+        {
+            "id": "foundation_monthly",
+            "name": "Little Learners Foundation",
+            "age_range": "4-6 years",
+            "price": "LKR 1,200/month",
+            "description": "Basic AI & Logic • Building blocks of future thinking"
+        },
+        {
+            "id": "foundation_advanced", 
+            "name": "Young Explorers Discovery",
+            "age_range": "7-9 years", 
+            "price": "LKR 1,200/month",
+            "description": "Advanced foundation with creative problem solving"
+        },
+        {
+            "id": "development_monthly",
+            "name": "Smart Kids Mastery",
+            "age_range": "10-12 years",
+            "price": "LKR 1,800/month", 
+            "description": "Logical Thinking & Creativity • Expanding cognitive abilities"
+        },
+        {
+            "id": "mastery_monthly",
+            "name": "Tech Teens Professional", 
+            "age_range": "13-15 years",
+            "price": "LKR 2,800/month",
+            "description": "Future Career Skills • Leadership preparation"
+        },
+        {
+            "id": "mastery_advanced",
+            "name": "Future Leaders Mastery",
+            "age_range": "16-18 years",
+            "price": "LKR 2,800/month", 
+            "description": "Complete future readiness with entrepreneurship"
+        }
+    ]
+    
+    return {"programs": programs}
+
+@api_router.get("/enrollment/stats")
+async def get_enrollment_stats(current_user: User = Depends(get_current_user)):
+    """Get enrollment statistics for admin dashboard"""
+    if current_user.role != UserRole.ADMIN:
+        raise HTTPException(status_code=403, detail="Admin access required")
+    
+    try:
+        # Get enrollment counts
+        total_enrollments = await db.enrollments.count_documents({})
+        pending_enrollments = await db.enrollments.count_documents({"status": "pending_registration"})
+        completed_registrations = await db.enrollments.count_documents({"status": "registered"})
+        
+        # Get enrollments by program
+        pipeline = [
+            {"$group": {"_id": "$selected_program", "count": {"$sum": 1}}},
+            {"$sort": {"count": -1}}
+        ]
+        program_stats = await db.enrollments.aggregate(pipeline).to_list(10)
+        
+        # Get recent enrollments
+        recent_enrollments = await db.enrollments.find(
+            {}, 
+            sort=[("created_at", -1)]
+        ).limit(10).to_list(10)
+        
+        # Clean up ObjectId
+        for enrollment in recent_enrollments:
+            if "_id" in enrollment:
+                del enrollment["_id"]
+        
+        return {
+            "total_enrollments": total_enrollments,
+            "pending_enrollments": pending_enrollments,
+            "completed_registrations": completed_registrations,
+            "program_distribution": program_stats,
+            "recent_enrollments": recent_enrollments,
+            "conversion_rate": (completed_registrations / total_enrollments * 100) if total_enrollments > 0 else 0
+        }
+        
+    except Exception as e:
+        logger.error(f"Failed to get enrollment stats: {e}")
+        raise HTTPException(status_code=500, detail="Failed to retrieve enrollment statistics")
+
+@api_router.post("/consultation/request")
+async def submit_consultation_request(
+    name: str = Form(...),
+    email: str = Form(...),
+    phone: str = Form(...),
+    child_age: str = Form(...),
+    message: str = Form(...),
+    consultation_type: str = Form(default="general"),
+    request: Request = None
+):
+    """Handle consultation requests from NINA"""
+    try:
+        consultation_record = {
+            "id": str(uuid.uuid4()),
+            "name": name,
+            "email": email,
+            "phone": phone,
+            "child_age": child_age,
+            "message": message,
+            "consultation_type": consultation_type,
+            "status": "pending",
+            "source": "nina_landing",
+            "created_at": datetime.utcnow(),
+            "ip_address": request.client.host if request else None
+        }
+        
+        await db.consultation_requests.insert_one(consultation_record)
+        
+        logger.info(f"Consultation request submitted: {email}")
+        
+        return {
+            "success": True,
+            "message": "Consultation request submitted successfully",
+            "consultation_id": consultation_record["id"]
+        }
+        
+    except Exception as e:
+        logger.error(f"Consultation request failed: {e}")
+        raise HTTPException(status_code=500, detail="Consultation request submission failed")
+
 # Basic health check
 @api_router.get("/")
 async def root():
